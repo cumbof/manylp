@@ -211,34 +211,137 @@ def fig_envelope():
     plt.close(fig)
 
 
-def fig_accuracy(rows):
+def _coherent_rows():
+    rows = []
+    for f in glob.glob(f"{R}/solvers/*@workload_coherent.json"):
+        d = json.load(open(f))["summary"]
+        d["family"] = family(d["solver"])
+        rows.append(d)
+    return rows
+
+
+def fig_accuracy(_rows=None):
+    """Speed vs accuracy on the coherent dFBA workload (steady-state LP/s vs max objective error)."""
     import matplotlib.pyplot as plt
 
+    rows = _coherent_rows()
     if not rows:
         return
-    fig, ax = plt.subplots(figsize=(6.4, 4.4), dpi=160)
-    groups = [("exact (simplex / IPM+crossover)", C[1], "s"), ("first-order (PDHG / ADMM)", C[2], "^"),
-              ("manylp", C[0], "o")]
+    floor = 1e-13          # an exact 0 is drawn on the floor line
+    groups = {"manylp": ("manylp (certified)", C[0]), "exact": ("exact CPU/GPU solvers", C[1]),
+              "fo": ("first-order GPU/CPU solvers", C[2])}
+    # short labels and hand-placed offsets (points) so the dense exact-solver cluster stays readable
+    LAB = {"manylp-cpu-fba": ("manylp FBA (CPU \u25cf, GPU \u25cb)", (0, 9), "center"),
+           "manylp-cpu-pfba-unique": ("manylp pFBA-unique (CPU, GPU)", (0, 10), "center"),
+           "manylp-gpu-perlp-fba": ("manylp GPU, one LP per call", (0, 10), "center"),
+           "highs-simplex-warm-p32": ("HiGHS", (7, -1), "left"),
+           "highs-lex-pfba-unique-p32": ("HiGHS pFBA-unique", (3, -13), "left"),
+           "highs-ipm-cold-p32": ("HiGHS IPM", (-7, -1), "right"),
+           "scipy-p32": ("SciPy", (-3, -13), "right"),
+           "glpk-p32": ("GLPK", (7, -1), "left"), "gurobi-dual-warm-p32": ("Gurobi / Xpress", (8, 0), "left"),
+           "glop-p32": ("GLOP", (7, -1), "left"), "cuopt-concurrent-e1e-6": ("cuOpt concurrent", (7, -1), "left"),
+           "cuopt-pdlp-batch-e1e-6": ("cuOpt PDLP (\u03b5 = 10\u207b\u2076)", (7, -1), "left"),
+           "mpax-e1e-6": ("MPAX (12% solved)", (7, -1), "left"),
+           "ourpdhg-e1e-6": ("batched PDHG (0% solved)", (0, -13), "center")}
+    fig, ax = plt.subplots(figsize=(6.6, 4.4), dpi=200)
     for r in rows:
         err = r.get("obj_rel_err_max")
-        if err is None:
+        x = r.get("steady_lps_per_second") or r["lps_per_second"]
+        if err is None or not x:
             continue
-        kind = "manylp" if r["family"] == "manylp" else (
-            "first-order (PDHG / ADMM)" if r["exact"].startswith("no") else "exact (simplex / IPM+crossover)")
-        col, mk = {g[0]: (g[1], g[2]) for g in groups}[kind]
-        ax.scatter(r["lps_per_second"], max(err, 1e-16), s=46, color=col, marker=mk, edgecolor="white", lw=1.5,
-                   zorder=3)
-        ax.annotate(r["name"].split(" (")[0].replace(" x32proc", ""), (r["lps_per_second"], max(err, 1e-16)),
-                    xytext=(5, 3), textcoords="offset points", fontsize=6.5, color=INK2)
-    for g in groups:
-        ax.scatter([], [], color=g[1], marker=g[2], label=g[0])
+        exact = CAPS.get(r["family"], ("", "", "", "", "no"))[4]
+        g = "manylp" if r["family"] == "manylp" else ("fo" if str(exact).startswith("no") else "exact")
+        gpu = r["device"] != "cpu"
+        y = max(err, floor)
+        ax.scatter(x, y, s=52, marker="o", facecolor=groups[g][1] if not gpu else "white",
+                   edgecolor=groups[g][1], lw=1.8, zorder=3)
+        if r["solver"] in LAB:
+            text, off, ha = LAB[r["solver"]]
+            ax.annotate(text, (x, y), xytext=off, textcoords="offset points", fontsize=6.5, color=INK2, ha=ha,
+                        va="center")
+    ax.axhline(floor, color=GRID, lw=1)
+    ax.annotate("exact 0", (0.01, floor), xycoords=("axes fraction", "data"), xytext=(0, 3),
+                textcoords="offset points", fontsize=6.5, color=INK2)
+    for g, (lab, col) in groups.items():
+        ax.scatter([], [], color=col, label=lab)
+    ax.scatter([], [], facecolor="white", edgecolor=INK2, label="open marker = GPU")
     ax.set_xscale("log")
     ax.set_yscale("log")
-    _style(ax, "Speed vs accuracy on the recorded dFBA workload", "LPs per second",
+    _style(ax, "Speed vs accuracy, coherent dFBA workload (185,088 LPs)", "steady-state LPs per second",
            "max relative objective error")
-    ax.legend(frameon=False, fontsize=8, loc="upper right")
+    ax.legend(frameon=False, fontsize=7.5, loc="upper right")
     fig.tight_layout()
     fig.savefig(f"{OUT}/fig_accuracy.png")
+    plt.close(fig)
+
+
+def _netlib_rows():
+    p = f"{R}/netlib/netlib_B1024.json"
+    if not os.path.exists(p):
+        return []
+    nl = [r for r in json.load(open(p)) if r["m"] > 0 and r["n"] > 0]
+    patch = {r["problem"]: r for f in glob.glob(f"{R}/netlib_patch/*.json") for r in json.load(open(f))}
+    return [patch.get(r["problem"], r) for r in nl]
+
+
+def fig_netlib():
+    """Speed-up over 32-process HiGHS vs the number of distinct optimal bases among the 1,024 scenarios."""
+    import matplotlib.pyplot as plt
+
+    nl = _netlib_rows()
+    if not nl:
+        return
+    fig, ax = plt.subplots(figsize=(6.6, 4.2), dpi=200)
+    for r in nl:
+        reg = max(r["manylp-cpu"]["distinct_bases"], 1)
+        bm = max(r["manylp-cpu"]["lps_per_second"], r["manylp-gpu"]["lps_per_second"])
+        bh = max(r[k]["lps_per_second"] for k in r if k.startswith("highs-"))
+        sp = bm / bh
+        col = C[0] if sp >= 1 else C[1]
+        ax.scatter(reg, sp, s=40, color=col, edgecolor="white", lw=1.2, zorder=3)
+        if r["problem"] in ("kb2", "recipe", "afiro", "agg", "scsd8", "bnl1", "share1b", "agg2"):
+            off, ha = ((-6, -2), "right") if r["problem"] == "share1b" else ((5, 2), "left")
+            ax.annotate(r["problem"], (reg, sp), xytext=off, textcoords="offset points", fontsize=6.5, color=INK2,
+                        ha=ha)
+    ax.axhline(1, color=INK2, lw=1, ls="--")
+    ax.axvline(512, color=INK2, lw=0.8, ls=":")
+    ax.annotate("pool cap (512)", (512, 1), xycoords=("data", "axes fraction"), xytext=(-4, -10),
+                textcoords="offset points", fontsize=6.5, color=INK2, ha="right")
+    ax.scatter([], [], color=C[0], label="manylp faster")
+    ax.scatter([], [], color=C[1], label="HiGHS faster")
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    _style(ax, "Netlib under RHS uncertainty (1,024 scenarios per problem)",
+           "distinct optimal bases among the 1,024 scenarios", "speed-up of manylp over HiGHS (32 processes)")
+    ax.legend(frameon=False, fontsize=7.5, loc="lower left")
+    fig.tight_layout()
+    fig.savefig(f"{OUT}/fig_netlib.png")
+    plt.close(fig)
+
+
+def fig_size():
+    """Steady-state throughput vs model size (genome-scale models, B = 1,024, random-walk bounds)."""
+    import matplotlib.pyplot as plt
+
+    p = f"{R}/size/size.json"
+    if not os.path.exists(p):
+        return
+    rows = json.load(open(p))
+    fig, axes = plt.subplots(1, 2, figsize=(9.6, 3.8), dpi=200, sharey=True)
+    for ax, mode in zip(axes, ("fba", "pfba-unique")):
+        rr = sorted([r for r in rows if r["mode"] == mode], key=lambda r: r["n"])
+        if not rr:
+            continue
+        n = [r["n"] for r in rr]
+        for key, lab, col in (("manylp-gpu", "manylp (GPU)", C[0]), ("manylp-cpu", "manylp (CPU)", C[1]),
+                              ("highs-warm-p32", "HiGHS warm, 32 processes", C[2])):
+            ax.plot(n, [r[key]["steady_lps_per_second"] for r in rr], "-o", color=col, lw=2, ms=5, label=lab)
+        _style(ax, f"{mode}", "reactions (n)", "steady-state LPs per second" if mode == "fba" else "")
+        ax.set_xscale("log")
+        ax.set_yscale("log")
+    axes[0].legend(frameon=False, fontsize=7.5, loc="lower left")
+    fig.tight_layout()
+    fig.savefig(f"{OUT}/fig_size.png")
     plt.close(fig)
 
 
@@ -279,7 +382,9 @@ def main():
     json.dump({"comparison": comp_rows}, open(f"{OUT}/comparison.json", "w"), indent=1, default=str)
     fig_scaling(drows)
     fig_envelope()
-    fig_accuracy(comp_rows)
+    fig_accuracy()
+    fig_netlib()
+    fig_size()
     print(md[:6000])
 
 
