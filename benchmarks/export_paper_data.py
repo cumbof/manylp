@@ -10,7 +10,7 @@ import shutil
 
 SRC, DST = "results", "paper/data"
 DIRS = ["solvers", "dfba_v2", "dfba_v3", "muode", "muode_v2", "spatial", "adaptive", "alt_optima", "coldstart",
-        "sparsity", "netlib", "netlib_patch", "size", "throughput"]
+        "sparsity", "netlib", "netlib_patch", "netlib_bunching", "size", "throughput", "external"]
 
 n = 0
 for d in DIRS:
