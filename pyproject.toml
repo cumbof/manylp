@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "manylp"
+version = "0.1.0"
+description = "Exact batched solver for large batches of small, structurally-shared, bounds-parametric linear programs (CPU + GPU)"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+authors = [{ name = "Fabio Cumbo" }]
+keywords = ["linear-programming", "batched", "gpu", "dynamic-fba", "parametric-lp", "simplex"]
+dependencies = [
+    "numpy>=1.23",
+    "scipy>=1.10",
+    "highspy>=1.7",
+]
+
+[project.optional-dependencies]
+gpu = ["cupy-cuda12x>=13"]
+cobra = ["cobra>=0.29"]
+pdhg = ["jax>=0.4.30"]
+dev = ["pytest>=7.0"]
+
+[tool.setuptools.packages.find]
+include = ["manylp*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+markers = [
+    "gpu: needs a CUDA device and cupy",
+    "slow: genome-scale models or long trajectories",
+]
