@@ -1,0 +1,61 @@
+{
+ "legacy": {
+  "wall_seconds": 868.5399885755032,
+  "lps": 7680,
+  "lps_per_second": 8.842425335644023,
+  "final_total_biomass": {
+   "A_muciniphila_BAA835": 0.01,
+   "B_fragilis_NCTC9343": 0.010343727068369482,
+   "B_longum_NCC2705": 0.01000811686217063,
+   "B_thetaiotaomicron_VPI5482": 0.010428990893877528,
+   "Bl_obeum_A2162": 0.01,
+   "C_comes_ATCC27758": 0.010008116862170631,
+   "E_rectale_ATCC33656": 0.010021265755384437,
+   "F_prausnitzii_A2165": 0.01000811686217063,
+   "L_acidophilus_NCFM": 0.01,
+   "P_copri_DSM18205": 0.010390202685390532,
+   "R_bromii_L263": 0.010271410670281754,
+   "R_intestinalis_L182": 0.010350423033778616
+  }
+ },
+ "manylp-cpu": {
+  "wall_seconds": 9.606100290082395,
+  "lps": 7680,
+  "lps_per_second": 799.4919653221865,
+  "final_total_biomass": {
+   "A_muciniphila_BAA835": 0.009999999999999752,
+   "B_fragilis_NCTC9343": 0.010356510546585615,
+   "B_longum_NCC2705": 0.01000811686217465,
+   "B_thetaiotaomicron_VPI5482": 0.010442040593855105,
+   "Bl_obeum_A2162": 0.010000000000027197,
+   "C_comes_ATCC27758": 0.010008116862294936,
+   "E_rectale_ATCC33656": 0.010021265755380364,
+   "F_prausnitzii_A2165": 0.010008116862173512,
+   "L_acidophilus_NCFM": 0.010000000000001797,
+   "P_copri_DSM18205": 0.010398540928615614,
+   "R_bromii_L263": 0.010280595204451843,
+   "R_intestinalis_L182": 0.01036575874781067
+  },
+  "max_rel_biomass_diff_vs_legacy": 0.0014816509414161965
+ },
+ "manylp-gpu": {
+  "wall_seconds": 8.689456089399755,
+  "lps": 7680,
+  "lps_per_second": 883.8297726561749,
+  "final_total_biomass": {
+   "A_muciniphila_BAA835": 0.009999999999999752,
+   "B_fragilis_NCTC9343": 0.010356510546585615,
+   "B_longum_NCC2705": 0.01000811686217465,
+   "B_thetaiotaomicron_VPI5482": 0.010442040593855105,
+   "Bl_obeum_A2162": 0.010000000000027197,
+   "C_comes_ATCC27758": 0.010008116862294936,
+   "E_rectale_ATCC33656": 0.010021265755380364,
+   "F_prausnitzii_A2165": 0.010008116862173512,
+   "L_acidophilus_NCFM": 0.010000000000001797,
+   "P_copri_DSM18205": 0.010398540928615614,
+   "R_bromii_L263": 0.010280595204451843,
+   "R_intestinalis_L182": 0.01036575874781067
+  },
+  "max_rel_biomass_diff_vs_legacy": 0.0014816509414161965
+ }
+}

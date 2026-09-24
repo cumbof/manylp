@@ -1,0 +1,101 @@
+[
+ {
+  "E": 1,
+  "variant": "eager",
+  "solve_seconds": 6.106995767913759,
+  "lps": 5772,
+  "simplex_solves": 27,
+  "repair_seconds": 3.392926356755197,
+  "certify_seconds": 1.8613722678273916,
+  "atlas_bases": 0,
+  "atlas_saved": 28
+ },
+ {
+  "E": 1,
+  "variant": "progressive",
+  "solve_seconds": 5.555592315271497,
+  "lps": 5772,
+  "simplex_solves": 27,
+  "repair_seconds": 2.8953410563990474,
+  "certify_seconds": 1.8171841856092215,
+  "atlas_bases": 0,
+  "atlas_saved": 28
+ },
+ {
+  "E": 1,
+  "variant": "progressive+atlas",
+  "solve_seconds": 2.8465026756748557,
+  "lps": 5772,
+  "simplex_solves": 0,
+  "repair_seconds": 0.018057002685964108,
+  "certify_seconds": 1.9920121738687158,
+  "atlas_bases": 28,
+  "atlas_saved": 28
+ },
+ {
+  "E": 64,
+  "variant": "eager",
+  "solve_seconds": 20.443234656006098,
+  "lps": 369408,
+  "simplex_solves": 864,
+  "repair_seconds": 13.18778695166111,
+  "certify_seconds": 4.823548532091081,
+  "atlas_bases": 0,
+  "atlas_saved": 31
+ },
+ {
+  "E": 64,
+  "variant": "progressive",
+  "solve_seconds": 11.028584565967321,
+  "lps": 369408,
+  "simplex_solves": 76,
+  "repair_seconds": 3.599355579353869,
+  "certify_seconds": 4.9081621542572975,
+  "atlas_bases": 0,
+  "atlas_saved": 31
+ },
+ {
+  "E": 64,
+  "variant": "progressive+atlas",
+  "solve_seconds": 8.359566973522305,
+  "lps": 369408,
+  "simplex_solves": 0,
+  "repair_seconds": 0.021657928824424744,
+  "certify_seconds": 5.488061536103487,
+  "atlas_bases": 31,
+  "atlas_saved": 31
+ },
+ {
+  "E": 1024,
+  "variant": "eager",
+  "solve_seconds": 70.26351247541606,
+  "lps": 5910528,
+  "simplex_solves": 864,
+  "repair_seconds": 13.027196963317692,
+  "certify_seconds": 28.89771860651672,
+  "atlas_bases": 0,
+  "atlas_saved": 33
+ },
+ {
+  "E": 1024,
+  "variant": "progressive",
+  "solve_seconds": 79.40661579556763,
+  "lps": 5910528,
+  "simplex_solves": 76,
+  "repair_seconds": 6.108476952649653,
+  "certify_seconds": 42.55974571593106,
+  "atlas_bases": 0,
+  "atlas_saved": 33
+ },
+ {
+  "E": 1024,
+  "variant": "progressive+atlas",
+  "solve_seconds": 74.64617273025215,
+  "lps": 5910528,
+  "simplex_solves": 0,
+  "repair_seconds": 0.03807622566819191,
+  "certify_seconds": 44.225499796681106,
+  "atlas_bases": 33,
+  "atlas_saved": 33
+ }
+]

@@ -1,0 +1,23 @@
+{
+ "backend": "legacy-cobra-glpk-j12",
+ "E": 1,
+ "species": 12,
+ "t_end": 48.0,
+ "dt": 0.1,
+ "wall_seconds": 696.4671138096601,
+ "stats": {},
+ "final_biomass_member0": {
+  "A_muciniphila_BAA835": 0.00039999999999999996,
+  "B_fragilis_NCTC9343": 0.006594603954017459,
+  "B_longum_NCC2705": 0.000727799406702834,
+  "B_thetaiotaomicron_VPI5482": 0.018133565487272248,
+  "Bl_obeum_A2162": 0.0007999999999999999,
+  "C_comes_ATCC27758": 0.000311914031444073,
+  "E_rectale_ATCC33656": 0.0013288166382558755,
+  "F_prausnitzii_A2165": 0.0008317707505175246,
+  "L_acidophilus_NCFM": 0.0002999999999999999,
+  "P_copri_DSM18205": 0.002535516750180664,
+  "R_bromii_L263": 0.002525364936510867,
+  "R_intestinalis_L182": 0.005378050650900899
+ }
+}

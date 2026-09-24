@@ -1,0 +1,56 @@
+[
+ {
+  "scheme": "Euler dt=0.1",
+  "lps": 242,
+  "wall": 0.13326951023191214,
+  "rhs_evals": null,
+  "regime_switches": null,
+  "max_rel_err_biomass": 0.07525910520227477,
+  "max_rel_err_glc_ac": 6.532113684806785
+ },
+ {
+  "scheme": "Euler dt=0.01",
+  "lps": 2402,
+  "wall": 0.9634100729599595,
+  "rhs_evals": null,
+  "regime_switches": null,
+  "max_rel_err_biomass": 0.007855624948129138,
+  "max_rel_err_glc_ac": 0.2054873257767851
+ },
+ {
+  "scheme": "RK45 1e-6",
+  "lps": 1408,
+  "wall": 1.0716250482946634,
+  "rhs_evals": 704,
+  "regime_switches": 0,
+  "max_rel_err_biomass": 8.09098519412367e-05,
+  "max_rel_err_glc_ac": 0.0019264990679981788
+ },
+ {
+  "scheme": "RK45 1e-6 + regime events",
+  "lps": 1822,
+  "wall": 0.9466839507222176,
+  "rhs_evals": 686,
+  "regime_switches": 3,
+  "max_rel_err_biomass": 8.09098519412367e-05,
+  "max_rel_err_glc_ac": 0.0016447740674769915
+ },
+ {
+  "scheme": "RK45 1e-8",
+  "lps": 2716,
+  "wall": 1.7700118841603398,
+  "rhs_evals": 1358,
+  "regime_switches": 0,
+  "max_rel_err_biomass": 7.981175103324122e-05,
+  "max_rel_err_glc_ac": 0.0019019365640010578
+ },
+ {
+  "scheme": "RK45 1e-8 + regime events",
+  "lps": 3360,
+  "wall": 2.264013350009918,
+  "rhs_evals": 1456,
+  "regime_switches": 1,
+  "max_rel_err_biomass": 7.981175103324122e-05,
+  "max_rel_err_glc_ac": 0.0019015784100790804
+ }
+]

@@ -1,0 +1,82 @@
+{
+ "summary": {
+  "solver": "cuopt-pdlp-batch-e1e-6",
+  "name": "cuopt-pdlp-batch (eps=1e-06)",
+  "device": "gpu",
+  "batched": true,
+  "warm_start": false,
+  "lps": 448,
+  "batches": 7,
+  "total_lps": 23808,
+  "completed_all": false,
+  "setup_seconds": 3.158876957371831,
+  "solve_seconds": 935.6569096734747,
+  "wall_seconds": 939.2565252501518,
+  "lps_per_second": 0.47880798545734343,
+  "first_batch_seconds": 2.874557351693511,
+  "success_rate": 1.0,
+  "status_agreement": 1.0,
+  "obj_rel_err_median": 1.731107689140199e-08,
+  "obj_rel_err_p99": 8.550860296722342e-07,
+  "obj_rel_err_max": 1.0053059746545703e-06,
+  "infeas_median": 1.1541990870000962e-09,
+  "infeas_max": 1.409851261653059e-06,
+  "exchange_dev_median": 0.09077394051109113,
+  "exchange_dev_max": 1.8026969634369285,
+  "frac_exchange_dev_gt_1e-6": 0.5714285714285714,
+  "gpu_mem_peak_mib": 469,
+  "host_maxrss_mib": 914.94140625,
+  "children_maxrss_mib": 914.94140625
+ },
+ "batches": [
+  {
+   "batch": 0,
+   "step": 0,
+   "species": 0,
+   "B": 64,
+   "seconds": 2.874557351693511
+  },
+  {
+   "batch": 1,
+   "step": 0,
+   "species": 1,
+   "B": 64,
+   "seconds": 59.96532368287444
+  },
+  {
+   "batch": 2,
+   "step": 0,
+   "species": 2,
+   "B": 64,
+   "seconds": 244.05657655652612
+  },
+  {
+   "batch": 3,
+   "step": 0,
+   "species": 3,
+   "B": 64,
+   "seconds": 28.332309858873487
+  },
+  {
+   "batch": 4,
+   "step": 0,
+   "species": 4,
+   "B": 64,
+   "seconds": 1.1725330771878362
+  },
+  {
+   "batch": 5,
+   "step": 0,
+   "species": 5,
+   "B": 64,
+   "seconds": 5.177395113743842
+  },
+  {
+   "batch": 6,
+   "step": 0,
+   "species": 6,
+   "B": 64,
+   "seconds": 594.0782140325755
+  }
+ ]
+}

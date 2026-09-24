@@ -1,0 +1,40 @@
+{
+ "manylp-cpu": {
+  "wall_seconds": 17.099965520203114,
+  "lps": 30720,
+  "lps_per_second": 1796.4948504548277,
+  "final_total_biomass": {
+   "A_muciniphila_BAA835": 0.009999999999992867,
+   "B_fragilis_NCTC9343": 0.010346710188887814,
+   "B_longum_NCC2705": 0.010008116862154385,
+   "B_thetaiotaomicron_VPI5482": 0.010429280972982987,
+   "Bl_obeum_A2162": 0.01000000000003205,
+   "C_comes_ATCC27758": 0.010008116862275577,
+   "E_rectale_ATCC33656": 0.010021265755380556,
+   "F_prausnitzii_A2165": 0.010008116862173512,
+   "L_acidophilus_NCFM": 0.009999999999982388,
+   "P_copri_DSM18205": 0.010391861522473813,
+   "R_bromii_L263": 0.01027365377563003,
+   "R_intestinalis_L182": 0.010350339119350249
+  }
+ },
+ "manylp-gpu": {
+  "wall_seconds": 16.87548018246889,
+  "lps": 30720,
+  "lps_per_second": 1820.3926447031417,
+  "final_total_biomass": {
+   "A_muciniphila_BAA835": 0.009999999999992867,
+   "B_fragilis_NCTC9343": 0.010346710188887814,
+   "B_longum_NCC2705": 0.010008116862154385,
+   "B_thetaiotaomicron_VPI5482": 0.010429280972982987,
+   "Bl_obeum_A2162": 0.01000000000003205,
+   "C_comes_ATCC27758": 0.010008116862275577,
+   "E_rectale_ATCC33656": 0.010021265755380556,
+   "F_prausnitzii_A2165": 0.010008116862173512,
+   "L_acidophilus_NCFM": 0.009999999999982388,
+   "P_copri_DSM18205": 0.010391861522473813,
+   "R_bromii_L263": 0.01027365377563003,
+   "R_intestinalis_L182": 0.010350339119350249
+  }
+ }
+}

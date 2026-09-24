@@ -1,0 +1,20 @@
+{
+ "lazy": {
+  "solve_seconds": 17.04221939574927,
+  "lps_per_second": 86704.20006261367,
+  "bases": 33,
+  "n_np_mean": 233.96969696969697,
+  "n_active_mean": 21.393939393939394,
+  "n_active_max": 58,
+  "device_MiB": 11.5623779296875
+ },
+ "dense": {
+  "solve_seconds": 17.092183678410947,
+  "lps_per_second": 86450.74425840566,
+  "bases": 33,
+  "n_np_mean": 233.96969696969697,
+  "n_active_mean": 233.96969696969697,
+  "n_active_max": 290,
+  "device_MiB": 87.08204650878906
+ }
+}

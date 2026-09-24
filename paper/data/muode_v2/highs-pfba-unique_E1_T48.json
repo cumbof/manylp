@@ -1,0 +1,26 @@
+{
+ "backend": "highs-pfba-unique",
+ "E": 1,
+ "species": 12,
+ "t_end": 48.0,
+ "dt": 0.1,
+ "wall_seconds": 62.55895994883031,
+ "stats": {
+  "lps": 5772,
+  "fallback_lps": 0
+ },
+ "final_biomass_member0": {
+  "A_muciniphila_BAA835": 0.00039999999999999996,
+  "B_fragilis_NCTC9343": 0.006606089254494312,
+  "B_longum_NCC2705": 0.0007277994067028338,
+  "B_thetaiotaomicron_VPI5482": 0.018078991018601474,
+  "Bl_obeum_A2162": 0.0007999999999999999,
+  "C_comes_ATCC27758": 0.0003119140314440722,
+  "E_rectale_ATCC33656": 0.0013288166382558573,
+  "F_prausnitzii_A2165": 0.0008317707505175247,
+  "L_acidophilus_NCFM": 0.0002999999999999999,
+  "P_copri_DSM18205": 0.002499661489464181,
+  "R_bromii_L263": 0.0025246183188200808,
+  "R_intestinalis_L182": 0.005305470175438367
+ }
+}

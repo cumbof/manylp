@@ -1,0 +1,45 @@
+[
+ {
+  "problem": "bnl1",
+  "m": 643,
+  "n": 1175,
+  "nnz": 5121,
+  "B": 1024,
+  "p": 643,
+  "manylp-cpu": {
+   "seconds": 1.8154692919924855,
+   "lps_per_second": 564.0414875187206,
+   "simplex_solves": 599,
+   "distinct_bases": 476,
+   "farkas": 1,
+   "certified": 0.9921875,
+   "optimal": 476,
+   "infeasible": 541
+  },
+  "manylp-gpu": {
+   "seconds": 2.5510494159534574,
+   "lps_per_second": 401.403435619956,
+   "simplex_solves": 599,
+   "distinct_bases": 476,
+   "farkas": 1,
+   "certified": 0.9921875,
+   "optimal": 476,
+   "infeasible": 541
+  },
+  "highs-cold-p32": {
+   "seconds": 2.0325762135908008,
+   "lps_per_second": 503.79414712867055,
+   "iterations": 967405
+  },
+  "highs-hot-p32": {
+   "seconds": 1.7478121900931,
+   "lps_per_second": 585.8753050265973,
+   "iterations": 339911
+  },
+  "status_agreement": 1.0,
+  "highs_errors": 12,
+  "highs_errors_certified_by_manylp": 5,
+  "manylp_errors": 7,
+  "obj_rel_err_max": 6.695498324578657e-11
+ }
+]
