@@ -70,8 +70,9 @@ class Tolerances:
     primal_rel: float = 1e-9
     #: a reduced cost is nonzero when ``|d| > dual * max(1, ||c_k||_inf)``
     dual: float = 1e-9
-    #: Farkas margin, relative to ``sum_j |r_j| max(1, |bound_j|)``
-    farkas: float = 1e-9
+    #: Farkas margin, relative to ``sum_j |r_j| max(1, |bound_j|)``; the margin must also exceed
+    #: twice a floating-point error bound of the test itself (see :func:`check_farkas`)
+    farkas: float = 1e-11
 
 
 def lex_signs(D: np.ndarray, scales: np.ndarray, tol: float) -> np.ndarray:
@@ -610,6 +611,8 @@ class FarkasEntry:
     max_static: float
     min_static: float
     scale_static: float
+    err_static: float = 0.0     # rounding-error bound of r^T z over the static variables
+    n_terms: int = 0            # length of the dot product r^T z (for its rounding bound)
     hits: int = 0
     last_used: int = 0
     id: int = -1
@@ -624,24 +627,45 @@ def _box_extremes(r: np.ndarray, lb: np.ndarray, ub: np.ndarray) -> tuple[float,
     return float(hi.sum()), float(lo.sum()), float(mag.sum())
 
 
+_UNIT = np.finfo(float).eps / 2
+
+
+def _gamma(k: int) -> float:
+    """Higham's ``gamma_k = k u / (1 - k u)``: relative error bound of a k-term dot product."""
+    return k * _UNIT / (1.0 - k * _UNIT)
+
+
+def _finite_mag(lb: np.ndarray, ub: np.ndarray) -> np.ndarray:
+    return np.maximum(np.abs(np.where(np.isfinite(lb), lb, 0.0)), np.abs(np.where(np.isfinite(ub), ub, 0.0)))
+
+
 def build_farkas_entry(lp: LexLP, y: np.ndarray) -> FarkasEntry:
-    """Turn a dual ray ``y`` (length ``m``) into a batched infeasibility test."""
+    """Turn a dual ray ``y`` (length ``m``) into a batched infeasibility test.
+
+    Every feasible ``z`` satisfies ``Abar z = 0`` and hence ``r^T z = 0`` for ``r = Abar^T y``.
+    The test uses the *computed* ``r`` unchanged; its rounding error is bounded per entry
+    by ``gamma_k (|Abar|^T |y|)_j`` (k = longest column), which :func:`check_farkas` adds
+    to the margin a member must clear.
+    """
     y = np.asarray(y, dtype=float).reshape(-1)
     r = lp.AbarT @ y
     scale = np.abs(r).max()
     if not np.isfinite(scale) or scale == 0.0:
         raise CertificateError("zero or non-finite Farkas vector")
+    k = int(np.diff(lp.AbarT.indptr).max()) + 1
+    e = _gamma(k) * (abs(lp.AbarT) @ np.abs(y)) / scale      # per-entry bound on |r_hat_j - r_j|
     r = r / scale
-    r[np.abs(r) < 1e-13] = 0.0
     static = ~lp.is_param
     mx, mn, mag = _box_extremes(r[static], lp.lb_z[static], lp.ub_z[static])
     if mx == np.inf and mn == -np.inf:
         raise CertificateError("Farkas vector unbounded over the static box")
-    rP = r[lp.param_z]
-    nz = np.nonzero(rP)[0]
-    dev = {"r": rP[nz], "pidx": nz, "absr": np.abs(rP[nz])}
+    err_static = float(np.sum(e[static] * _finite_mag(lp.lb_z[static], lp.ub_z[static])))
+    rP, eP = r[lp.param_z], e[lp.param_z]
+    nz = np.nonzero((rP != 0.0) | (eP > 0.0))[0]
+    dev = {"r": rP[nz], "pidx": nz, "absr": np.abs(rP[nz]), "e": eP[nz]}
     key = np.round(r, 12).tobytes()
-    return FarkasEntry(key=key, dev=dev, max_static=mx, min_static=mn, scale_static=mag)
+    return FarkasEntry(key=key, dev=dev, max_static=mx, min_static=mn, scale_static=mag,
+                       err_static=err_static, n_terms=int(r.size))
 
 
 def check_farkas(entry: FarkasEntry, Lp: np.ndarray, Up: np.ndarray, tol: Tolerances) -> np.ndarray:
@@ -662,7 +686,12 @@ def check_farkas(entry: FarkasEntry, Lp: np.ndarray, Up: np.ndarray, tol: Tolera
             mn = entry.min_static + np.sum(r * np.where(pos, L, U), axis=1)
         fin = lambda a: np.where(np.isfinite(a), np.abs(a), 0.0)  # noqa: E731
         scale = entry.scale_static + np.sum(d["absr"] * np.maximum(1.0, np.maximum(fin(L), fin(U))), axis=1)
-    thr = tol.farkas * scale
+    # floating-point error of the test: rounding of r (err_static + parametric part) plus the
+    # rounding of the dot product over the box vertex (gamma_n * scale)
+    err = entry.err_static + _gamma(entry.n_terms) * scale
+    if r.shape[0]:
+        err = err + np.sum(d.get("e", 0.0) * np.maximum(fin(L), fin(U)), axis=1)
+    thr = np.maximum(tol.farkas * scale, 2.0 * err)
     return (mx < -thr) | (mn > thr)
 
 

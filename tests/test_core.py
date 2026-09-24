@@ -116,6 +116,30 @@ def test_infeasible_members_are_certified_by_farkas(device):
     solver.close()
 
 
+def test_barely_infeasible_members_are_certified_despite_large_bounds():
+    # uptake x0 must cover a maintenance demand x1 >= 3.15; x2 and x3 are fixed at 500 and cancel
+    # in the constraint, so they inflate the Farkas scale (~1e3) while the true margin is 1e-7.
+    # A tolerance relative to that scale alone (1e-9 * 1e3 = 1e-6) could not certify these members
+    # (dFBA members starved of a nutrient), and they would be re-solved at every step.
+    A = sp.csr_matrix(np.array([[1.0, -1.0, 1.0, -1.0]]))
+    lp = LexLP(A=A, objectives=np.array([[0.0, 1.0, 0.0, 0.0]]),
+               col_lb=np.array([0.0, 3.15, 500.0, 500.0]), col_ub=np.array([10.0, 1000.0, 500.0, 500.0]),
+               param_cols=np.array([0]))
+    L0, U0 = lp.template_param_bounds()
+    L = np.tile(L0, (6, 1))
+    U = np.tile(U0, (6, 1))
+    U[::2, 0] = 3.15 - 1e-7          # infeasible by 1e-7
+    U[1::2, 0] = 5.0                 # feasible
+    solver = BatchLPSolver(device="cpu", n_workers=1)
+    g = solver.register_group(lp)
+    s1 = solver.solve_batch(g, L, U)
+    assert np.all(s1.status[::2] == INFEASIBLE) and np.all(s1.status[1::2] == OPTIMAL)
+    assert s1.certified.all()
+    s2 = solver.solve_batch(g, L, U, warm_start=s1)
+    assert s2.stats["highs_solves"] == 0 and s2.certified.all()
+    solver.close()
+
+
 def test_crossing_bounds_are_trivially_infeasible():
     lp = _lex_lp(seed=5, K=1)
     L, U = perturb_param_bounds(lp, 4, scale=0.1, seed=2)
