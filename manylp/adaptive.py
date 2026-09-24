@@ -14,9 +14,10 @@ This module integrates the continuous model
 
 with SciPy's embedded Runge-Kutta pairs, every right-hand-side evaluation being
 one batched, certified solve per species.  Regime switches are *detected
-exactly*: the solver reports which certified basis produced each member's
-fluxes, and a step whose stages straddle a switch is split at it by bisection
-on the basis id, so the integrator never steps across a kink.
+exactly*: a regime is the pattern of binding uptake bounds and growing members,
+which (with unique fluxes) is a function of the state alone and changes exactly
+at the kinks; a step whose stages straddle a switch is split there by the
+integrator's event location, so it never steps across a kink.
 
 It changes the time discretisation, not the LPs: the answer converges to the
 same continuous dFBA solution as fixed-step Euler with dt -> 0.
@@ -56,13 +57,18 @@ class _RHS:
         self.batches = 0
         self.lps = 0
         self.t_solve = 0.0
-        self.regime = None            # last basis-id signature per (species, member)
-
     def fluxes(self, X, M):
+        """Growth, environmental fluxes and the regime signature of every member.
+
+        The signature marks, per (member, species, exchange), whether the uptake bound
+        binds, plus which members grow.  Basis ids are not used: in degenerate LPs
+        several cached bases certify the same point, and which one is found first
+        depends on history, so they are not a function of the state.
+        """
         c = self.c
         mu = np.zeros((self.E, self.S))
         flux_env = np.zeros((self.E, self.nM))
-        sig = np.full((self.S, self.E), -1, dtype=np.int64)
+        binding = []
         Mp = np.maximum(M, 0.0)
         for s in range(self.S):
             active = np.nonzero(X[:, s] > self.min_biomass)[0]
@@ -79,8 +85,10 @@ class _RHS:
             self.lps += active.size
             mu[active, s] = g
             flux_env[np.ix_(active, envi)] += v * X[active, s][:, None]
-            w = self.ad.warm[s]
-            sig[s, active] = w[active]
+            b = np.zeros((self.E, envi.size), dtype=bool)
+            b[active] = (up > 0) & (np.abs(v + up) <= 1e-9 * np.maximum(1.0, up))
+            binding.append(b)
+        sig = np.concatenate(binding + [mu > 0], axis=1) if binding else mu > 0
         return mu, flux_env, sig
 
     def __call__(self, t, y):
@@ -128,8 +136,13 @@ def run_adaptive(comm: Community, adapter: ManyLPAdapter, E: int = 1, t_end: flo
         while t0 < t_end - 1e-12:
             switch.sig = sig0
             te = t_eval[(t_eval >= t0) & (t_eval <= t_end)]
-            sol = solve_ivp(rhs, (t0, t_end), y, method=method, rtol=rtol, atol=atol, t_eval=te,
-                            events=switch)
+            try:
+                sol = solve_ivp(rhs, (t0, t_end), y, method=method, rtol=rtol, atol=atol, t_eval=te,
+                                events=switch)
+            except ValueError:
+                # event location failed (the signature flickered inside a step, e.g. at a
+                # bound that is binding to within rounding): finish without splitting
+                sol = solve_ivp(rhs, (t0, t_end), y, method=method, rtol=rtol, atol=atol, t_eval=te)
             if len(sol.t):
                 seg_t.append(np.asarray(sol.t))
                 seg_y.append(np.asarray(sol.y).T)
