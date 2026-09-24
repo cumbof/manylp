@@ -256,7 +256,9 @@ def fig_accuracy(_rows=None):
            "glpk-p32": ("GLPK", (7, -1), "left"), "gurobi-dual-warm-p32": ("Gurobi / Xpress", (8, 0), "left"),
            "glop-p32": ("GLOP", (7, -1), "left"), "cuopt-concurrent-e1e-6": ("cuOpt concurrent", (7, -1), "left"),
            "cuopt-pdlp-batch-e1e-6": ("cuOpt PDLP (\u03b5 = 10\u207b\u2076)", (7, -1), "left"),
-           "mpax-e1e-6": ("MPAX (12% solved)", (7, -1), "left"),
+           "cuopt-pdlp-xover-e1e-6": ("cuOpt PDLP + crossover", (7, -1), "left"),
+           "cuopt-barrier-xover-e1e-6": ("cuOpt barrier+crossover (0.01% solved)", (7, -1), "left"),
+           "mpax-e1e-6": ("MPAX (12% solved)", (-7, -1), "right"),
            "ourpdhg-e1e-6": ("batched PDHG (0% solved)", (0, -13), "center")}
     fig, ax = plt.subplots(figsize=(6.6, 4.4), dpi=200)
     for r in rows:
@@ -284,7 +286,7 @@ def fig_accuracy(_rows=None):
     ax.set_yscale("log")
     _style(ax, "Speed vs accuracy, coherent dFBA workload (185,088 LPs)", "steady-state LPs per second",
            "max relative objective error")
-    ax.legend(frameon=False, fontsize=7.5, loc="upper right")
+    ax.legend(frameon=False, fontsize=7.5, loc="center right", bbox_to_anchor=(1, 0.64))
     fig.tight_layout()
     fig.savefig(f"{OUT}/fig_accuracy.png")
     plt.close(fig)
