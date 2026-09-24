@@ -51,6 +51,9 @@ def make_adapter(name: str, files):
         return HighsLoopAdapter(warm=False, n_workers=int(name.split("x")[-1]))
     if name == "scipy-linprog":
         return ScipyLinprogAdapter()
+    if name.startswith("bunching-p"):         # classical bunching baseline, plain FBA only
+        from bunching import BunchingProcAdapter
+        return BunchingProcAdapter(n_procs=int(name.split("-p")[-1]))
     if name.startswith("cobra-"):
         return CobraAdapter(files, solver=name.split("-", 1)[1])
     raise ValueError(name)

@@ -739,6 +739,11 @@ def _wsolve(s, ex_lb, member_ids):
     return r, time.perf_counter() - t
 
 
+def _wstats():
+    a = _W["a"]
+    return a.stats() if hasattr(a, "stats") else {}
+
+
 class ProcPool(Adapter):
     """Run a per-LP adapter in ``n`` processes; members pinned by ``member % n``."""
 
@@ -773,12 +778,21 @@ class ProcPool(Adapter):
             ok[idx], obj[idx], V[idx] = o, ob, v
         return ok, obj, V
 
+    def stats(self):
+        tot = {}
+        for e in self.ex:
+            for k, v in e.submit(_wstats).result().items():
+                tot[k] = tot.get(k, 0) + v
+        return tot
+
     def close(self):
         for e in self.ex:
             e.shutdown(cancel_futures=True)
 
 
+from bunching import Bunching  # noqa: E402  (benchmarks/ is on sys.path)
+
 REGISTRY = {
-    "highs": Highs, "glpk": GLPK, "scipy": ScipyLinprog, "glop": Glop, "ortools-pdlp": OrtoolsPDLP,
+    "bunching": Bunching, "highs": Highs, "glpk": GLPK, "scipy": ScipyLinprog, "glop": Glop, "ortools-pdlp": OrtoolsPDLP,
     "osqp": OSQP, "gurobi": Gurobi, "xpress": Xpress, "highs-lex": HighsLex,
 }

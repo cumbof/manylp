@@ -49,6 +49,9 @@ def make(spec: str):
     # per-LP CPU solvers: <name>[-args]-p<N>
     base, procs = spec.rsplit("-p", 1)
     n = int(procs)
+    if base.startswith("bunching"):          # bunching[-k<checks>]-p<N>
+        k = int(base.split("-k")[1]) if "-k" in base else 32
+        return C.ProcPool("bunching", n=n, max_checks=k)
     if base.startswith("highs-lex"):
         return C.ProcPool("highs-lex", n=n, mode="pfba-unique")
     if base.startswith("highs-"):
@@ -156,6 +159,7 @@ def main():
         rows.append(rec)
     mem.stop = True
     wall = time.perf_counter() - t0
+    solver_stats = ad.stats() if hasattr(ad, "stats") else {}
     ad.close()
 
     def cat(key):
@@ -190,6 +194,7 @@ def main():
         "exchange_dev_max": float(ex_dev[ref_ok].max()) if ex_dev.size else None,
         "frac_exchange_dev_gt_1e-6": float((ex_dev[ref_ok] > 1e-6).mean()) if ex_dev.size else None,
         "gpu_mem_peak_mib": mem.peak,
+        "solver_stats": solver_stats,
         "host_maxrss_mib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024,
         "children_maxrss_mib": resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss / 1024,
     }
