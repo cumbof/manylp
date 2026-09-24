@@ -377,7 +377,7 @@ def main():
                 parts.append(f"| {r['E']} | {r['variant']} | {r['solve_seconds']:.2f} | {r['simplex_solves']} | "
                              f"{r['repair_seconds']:.2f} | {r['atlas_bases']} |")
     if os.path.exists(f"{R}/netlib/netlib_B1024.json"):
-        nl = json.load(open(f"{R}/netlib/netlib_B1024.json"))
+        nl = _netlib_rows()   # skips failed downloads, applies re-run patches
         parts.append("\n\n## Netlib under RHS uncertainty (B = 1024 scenarios)\n")
         parts.append("| problem | m | n | regions | infeasible | manylp LP/s | HiGHS x32 LP/s (best) | speed-up | "
                      "status agree | max obj err |\n|---|---|---|---|---|---|---|---|---|---|")
