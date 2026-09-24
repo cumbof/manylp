@@ -608,7 +608,8 @@ re-derived by its own arithmetic (primal feasibility and lexicographic dual feas
 against an independent lexicographic reference (fresh HiGHS model per LP, objective-row formulation) to within 1.6×10<sup>-11</sup>.
 Baselines run with default settings (tolerances 10<sup>-6</sup> for first-order methods where set); where a solver failed or
 was not converged, the table reports what it returned. NVIDIA cuOpt's <code>BatchSolve</code> is deprecated upstream and implemented
-as concurrent host threads. Gurobi's pip licence is size-limited below these LPs and is therefore not included; qpth's package
+as concurrent host threads. Gurobi (size-restricted pip licence) and FICO Xpress (community licence) admit every gut model
+(at most 1,981 variables and 1,645 constraints) but not the larger models of the size benchmark; qpth's package
 is broken on PyPI and its dense-KKT design cannot hold genome-scale batches.</p>
 <footer>Code, raw results and scripts: <code>manylp/benchmarks/</code>. Regenerate with <code>python benchmarks/make_html_report.py</code>.</footer>
 """

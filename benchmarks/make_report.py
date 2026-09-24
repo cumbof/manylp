@@ -157,24 +157,39 @@ def _style(ax, title, xlabel, ylabel):
 
 
 def fig_scaling(rows):
+    """(a) community dFBA throughput vs ensemble size; (b) certification throughput vs batch size."""
     import matplotlib.pyplot as plt
 
     series = [("manylp-cuda", "manylp (GPU)", C[0]), ("manylp-cpu", "manylp (CPU)", C[1]),
-              ("highs-warm-p32", "HiGHS warm, 32 processes", C[2]), ("manylp-cuda-perlp", "manylp GPU, one LP per call", C[3]),
-              ("highs-warm-x1", "HiGHS warm, 1 thread", C[4])]
-    fig, ax = plt.subplots(figsize=(6.4, 4.2), dpi=160)
+              ("highs-warm-p32", "HiGHS warm, 32 processes", C[2]),
+              ("manylp-cuda-perlp", "manylp GPU, one LP per call", C[3]), ("highs-warm-x1", "HiGHS warm, 1 process", C[4])]
+    tp = f"{R}/throughput/throughput.json"
+    ncol = 2 if os.path.exists(tp) else 1
+    fig, axes = plt.subplots(1, ncol, figsize=(4.9 * ncol, 3.9), dpi=200, squeeze=False)
+    ax = axes[0, 0]
     for key, label, col in series:
         pts = sorted((E, r["lps_per_second"]) for (s, m, E), r in rows.items() if s == key and m == "pfba-unique")
         if not pts:
             continue
         x, y = zip(*pts)
-        ax.plot(x, y, "-o", color=col, lw=2, ms=6, label=label)
-        ax.annotate(label, (x[-1], y[-1]), xytext=(6, 0), textcoords="offset points", va="center",
-                    fontsize=8, color=INK2)
+        ax.plot(x, y, "-o", color=col, lw=2, ms=5, label=label)
     ax.set_xscale("log", base=2)
     ax.set_yscale("log")
-    _style(ax, "Community dFBA throughput (12 GEMs, 48 h, pFBA-unique)", "ensemble size E", "LPs solved per second")
-    ax.legend(frameon=False, fontsize=8, loc="upper left")
+    _style(ax, "(a) Community dFBA, 12 GEMs, 48 h, pFBA-unique", "ensemble size E", "LPs solved per second")
+    ax.legend(frameon=False, fontsize=7, loc="upper left")
+    if ncol == 2:
+        ax = axes[0, 1]
+        d = json.load(open(tp))
+        for key, label, col in (("gpu-device-resident", "GPU, device-resident I/O", C[0]),
+                                ("gpu-host-io", "GPU, host I/O", C[6]),
+                                ("cpu-fused", "CPU, fused Numba kernels", C[1]), ("cpu-numpy", "CPU, NumPy", C[3])):
+            pts = sorted((r["B"], r["lps_per_second"]) for r in d if r["variant"] == key)
+            x, y = zip(*pts)
+            ax.plot(x, y, "-o", color=col, lw=2, ms=4, label=label)
+        ax.set_xscale("log", base=2)
+        ax.set_yscale("log")
+        _style(ax, "(b) Certification only, one GEM (n = 1,980)", "batch size B", "LPs certified per second")
+        ax.legend(frameon=False, fontsize=7, loc="upper left")
     fig.tight_layout()
     fig.savefig(f"{OUT}/fig_scaling.png")
     plt.close(fig)
