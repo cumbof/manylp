@@ -337,26 +337,43 @@ def fig_netlib():
 
 
 def fig_size():
-    """Steady-state throughput vs model size (genome-scale models, B = 1,024, random-walk bounds)."""
+    """Speed-up over 32-process HiGHS for genome-scale models of increasing size, against distinct bases."""
     import matplotlib.pyplot as plt
 
     p = f"{R}/size/size.json"
     if not os.path.exists(p):
         return
     rows = json.load(open(p))
-    fig, axes = plt.subplots(1, 2, figsize=(9.6, 3.8), dpi=200, sharey=True)
-    for ax, mode in zip(axes, ("fba", "pfba-unique")):
-        rr = sorted([r for r in rows if r["mode"] == mode], key=lambda r: r["n"])
-        if not rr:
-            continue
-        n = [r["n"] for r in rr]
-        for key, lab, col in (("manylp-gpu", "manylp (GPU)", C[0]), ("manylp-cpu", "manylp (CPU)", C[1]),
-                              ("highs-warm-p32", "HiGHS warm, 32 processes", C[2])):
-            ax.plot(n, [r[key]["steady_lps_per_second"] for r in rr], "-o", color=col, lw=2, ms=5, label=lab)
-        _style(ax, f"{mode}", "reactions (n)", "steady-state LPs per second" if mode == "fba" else "")
-        ax.set_xscale("log")
-        ax.set_yscale("log")
-    axes[0].legend(frameon=False, fontsize=7.5, loc="lower left")
+    short = {"e_coli_core": "e_coli_core", "iYO844": "iYO844", "iMM904": "iMM904", "Bl_obeum (gapseq)": "B. obeum",
+             "B_thetaiotaomicron (gapseq)": "B. theta", "iJO1366": "iJO1366", "iML1515": "iML1515",
+             "Recon3D": "Recon3D"}
+    # hand-placed label offsets (points) for the crowded pFBA-unique cluster
+    OFF = {("iJO1366", "pfba-unique"): ((-6, 5), "right"), ("iML1515", "pfba-unique"): ((-6, -5), "right"),
+           ("iMM904", "pfba-unique"): ((6, 0), "left"), ("e_coli_core", "pfba-unique"): ((-6, 0), "right")}
+    fig, ax = plt.subplots(figsize=(6.6, 4.2), dpi=200)
+    for mode, col, mk, lab in (("fba", C[1], "s", "plain FBA"), ("pfba-unique", C[0], "o", "pFBA-unique")):
+        for r in rows:
+            if r["mode"] != mode:
+                continue
+            best = max(r["manylp-gpu"]["steady_lps_per_second"], r["manylp-cpu"]["steady_lps_per_second"])
+            sp = best / r["highs-warm-p32"]["steady_lps_per_second"]
+            reg = r["manylp-cpu"]["regions"] or 1
+            ax.scatter(reg, sp, s=46, color=col, marker=mk, edgecolor="white", lw=1.2, zorder=3)
+            off, ha = OFF.get((r["model"], mode), ((5, 2), "left"))
+            if reg >= 512:
+                off, ha = (-6, 0), "right"
+            ax.annotate(f"{short.get(r['model'], r['model'])} ({r['n']:,})", (reg, sp), xytext=off,
+                        textcoords="offset points", fontsize=6, color=INK2, ha=ha, va="center")
+        ax.scatter([], [], color=col, marker=mk, label=lab)
+    ax.axhline(1, color=INK2, lw=1, ls="--")
+    ax.axvline(512, color=INK2, lw=0.8, ls=":")
+    ax.annotate("pool cap (512)", (512, 1), xycoords=("data", "axes fraction"), xytext=(-4, -10),
+                textcoords="offset points", fontsize=6.5, color=INK2, ha="right")
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    _style(ax, "Genome-scale models, 1,024 members (reactions in brackets)",
+           "distinct optimal bases in the batch", "speed-up of manylp over HiGHS (32 processes)")
+    ax.legend(frameon=False, fontsize=7.5, loc="lower left")
     fig.tight_layout()
     fig.savefig(f"{OUT}/fig_size.png")
     plt.close(fig)
