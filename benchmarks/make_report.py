@@ -250,7 +250,7 @@ def fig_accuracy(_rows=None):
               "fo": ("first-order GPU/CPU solvers", C[2])}
     # short labels and hand-placed offsets (points) so the dense exact-solver cluster stays readable
     LAB = {"manylp-cpu-fba": ("manylp FBA (CPU \u25cf, GPU \u25cb)", (0, 9), "center"),
-           "manylp-cpu-pfba-unique": ("manylp pFBA-unique (CPU, GPU)", (0, 10), "center"),
+           "manylp-cpu-pfba-unique": ("manylp pFBA-unique", (0, 10), "center"),
            "manylp-gpu-perlp-fba": ("manylp GPU, one LP per call", (0, 10), "center"),
            "highs-simplex-warm-p32": ("HiGHS", (7, -1), "left"),
            "highs-lex-pfba-unique-p32": ("HiGHS pFBA-unique", (3, -13), "left"),
@@ -260,8 +260,7 @@ def fig_accuracy(_rows=None):
            "glop-p32": ("GLOP", (7, -1), "left"), "cuopt-concurrent-e1e-6": ("cuOpt concurrent", (7, -1), "left"),
            "cuopt-pdlp-batch-e1e-6": ("cuOpt PDLP (\u03b5 = 10\u207b\u2076)", (7, -1), "left"),
            "cuopt-pdlp-xover-e1e-6": ("cuOpt PDLP + crossover", (7, -1), "left"),
-           "bunching-p8": ("bunching, 8 processes", (0, 10), "center"),
-           "bunching-batch": ("batched bunching", (-7, -1), "right"),
+           "bunching-p8": None, "bunching-batch": None,        # shown as diamonds, see legend
            "cuopt-barrier-xover-e1e-6": ("cuOpt barrier+crossover (0.01% solved)", (7, -1), "left"),
            "mpax-e1e-6": ("MPAX (12% solved)", (-7, -1), "right"),
            "ourpdhg-e1e-6": ("batched PDHG (0% solved)", (0, -13), "center")}
@@ -277,9 +276,10 @@ def fig_accuracy(_rows=None):
         g = "manylp" if r["family"] == "manylp" else ("fo" if str(exact).startswith("no") else "exact")
         gpu = r["device"] != "cpu"
         y = max(err, floor)
-        ax.scatter(x, y, s=52, marker="o", facecolor=groups[g][1] if not gpu else "white",
+        mk = "D" if r["family"] == "bunching" else "o"
+        ax.scatter(x, y, s=46 if mk == "D" else 52, marker=mk, facecolor=groups[g][1] if not gpu else "white",
                    edgecolor=groups[g][1], lw=1.8, zorder=3)
-        if r["solver"] in LAB:
+        if LAB.get(r["solver"]):
             text, off, ha = LAB[r["solver"]]
             ax.annotate(text, (x, y), xytext=off, textcoords="offset points", fontsize=6.5, color=INK2, ha=ha,
                         va="center")
@@ -289,6 +289,7 @@ def fig_accuracy(_rows=None):
     for g, (lab, col) in groups.items():
         ax.scatter([], [], color=col, label=lab)
     ax.scatter([], [], facecolor="white", edgecolor=INK2, label="open marker = GPU")
+    ax.scatter([], [], marker="D", color=groups["exact"][1], label="classical bunching (8 processes; batched)")
     ax.set_xscale("log")
     ax.set_yscale("log")
     _style(ax, "Speed vs accuracy, coherent dFBA workload (185,088 LPs)", "steady-state LPs per second",
