@@ -361,10 +361,12 @@ def dfba_table_html(drows):
 def extra_sections():
     out = []
     # muODE end to end
-    mu = []
-    for f in sorted(glob.glob(f"{R}/muode/*.json")):
-        r = json.load(open(f))
-        mu.append(r)
+    byk = {}
+    for d in ("muode", "muode_v2"):               # the rerun (vectorised engine path) overrides
+        for f in sorted(glob.glob(f"{R}/{d}/*.json")):
+            r = json.load(open(f))
+            byk[(r["backend"], r["E"])] = r
+    mu = list(byk.values())
     if mu:
         leg = {r["E"]: r["wall_seconds"] for r in mu if r["backend"] == "legacy-cobra-glpk-j1"}
         rows = []
@@ -475,7 +477,7 @@ def extra_sections():
             if prod and rk:
                 bio.append((f"Regime-aware adaptive integration ({lab})", "changes time discretisation, not LPs",
                             "Certified LPs are cheap, exact function evaluations, so embedded Runge–Kutta integration becomes affordable; "
-                            "regime switches are located exactly from the certifying basis.",
+                            "regime switches (changes in which uptake bounds bind) can optionally be located by event detection.",
                             f"biomass error {prod['max_rel_err_biomass']:.1e} → {rk['max_rel_err_biomass']:.1e} "
                             f"({prod['max_rel_err_biomass'] / rk['max_rel_err_biomass']:.0f}× more accurate) for "
                             f"{rk['lps'] / prod['lps']:.1f}× the LPs of Euler at dt = 0.1."))
@@ -487,6 +489,20 @@ def extra_sections():
                "performance and memory layout, never which answer is returned (except where a policy is chosen explicitly).</p>")
     out.append("<div class='tablewrap'><table><thead><tr><th scope='col'>Mechanism</th><th scope='col'>Exactness</th>"
                "<th scope='col'>Idea</th><th scope='col'>Measured effect</th></tr></thead><tbody>" + rows + "</tbody></table></div>")
+    # trajectory-based dFBA simulators and manylp on the same scenarios (benchmarks/external/summarize.py)
+    md = f"{R}/external/summary.md"
+    if os.path.exists(md):
+        lines = [ln.strip() for ln in open(md) if ln.strip().startswith("|")]
+        if len(lines) > 2:
+            cells = lambda ln: [c.strip() for c in ln.strip("|").split("|")]  # noqa: E731
+            head = "".join(f"<th scope='col'>{esc(c)}</th>" for c in cells(lines[0]))
+            body = "".join("<tr>" + "".join(f"<td>{esc(c)}</td>" for c in cells(ln)) + "</tr>" for ln in lines[2:])
+            out.append("<h2 id='external'>Trajectory-based dFBA simulators on the same scenarios</h2><p class='lede'>The "
+                       "<code>dfba</code> package (Harwood/Barton event method), surfinFBA and manylp on the E. coli core "
+                       "diauxie and iJO1366 scenarios exported by <code>benchmarks/external/make_references.py</code>; "
+                       "errors against a fine Euler reference.</p>")
+            out.append(f"<div class='tablewrap'><table class='sortable'><thead><tr>{head}</tr></thead><tbody>{body}"
+                       "</tbody></table></div>")
     return "\n".join(out)
 
 

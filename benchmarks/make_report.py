@@ -53,6 +53,9 @@ CAPS = {
              "no", "MIT"),
     "ourpdhg": ("restarted PDHG, cuPDLP-style (JAX)", "GPU", "yes", "yes", "no (eps-optimal)", "solver status", "no",
                 "no", "MIT"),
+    "bunching": ("classical bunching: cached bases checked by sparse LU, misses by warm dual simplex", "CPU",
+                 "batched variant", "yes (basis cache)", "yes", "optimality only (no uniqueness, no Farkas)", "no",
+                 "no", "MIT"),
 }
 
 
@@ -257,6 +260,8 @@ def fig_accuracy(_rows=None):
            "glop-p32": ("GLOP", (7, -1), "left"), "cuopt-concurrent-e1e-6": ("cuOpt concurrent", (7, -1), "left"),
            "cuopt-pdlp-batch-e1e-6": ("cuOpt PDLP (\u03b5 = 10\u207b\u2076)", (7, -1), "left"),
            "cuopt-pdlp-xover-e1e-6": ("cuOpt PDLP + crossover", (7, -1), "left"),
+           "bunching-p8": ("bunching, 8 processes", (0, 10), "center"),
+           "bunching-batch": ("batched bunching", (-7, -1), "right"),
            "cuopt-barrier-xover-e1e-6": ("cuOpt barrier+crossover (0.01% solved)", (7, -1), "left"),
            "mpax-e1e-6": ("MPAX (12% solved)", (-7, -1), "right"),
            "ourpdhg-e1e-6": ("batched PDHG (0% solved)", (0, -13), "center")}
@@ -266,6 +271,8 @@ def fig_accuracy(_rows=None):
         x = r.get("steady_lps_per_second") or r["lps_per_second"]
         if err is None or not x:
             continue
+        if r["family"] == "bunching" and r["solver"] not in LAB:
+            continue                  # only the best per-LP configuration and the batched variant
         exact = CAPS.get(r["family"], ("", "", "", "", "no"))[4]
         g = "manylp" if r["family"] == "manylp" else ("fo" if str(exact).startswith("no") else "exact")
         gpu = r["device"] != "cpu"
