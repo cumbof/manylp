@@ -13,11 +13,12 @@ This module integrates the continuous model
     dM_j/dt = influx_j - D M_j + sum_i v_ij(u) X_i
 
 with SciPy's embedded Runge-Kutta pairs, every right-hand-side evaluation being
-one batched, certified solve per species.  Regime switches are *detected
-exactly*: a regime is the pattern of binding uptake bounds and growing members,
-which (with unique fluxes) is a function of the state alone and changes exactly
-at the kinks; a step whose stages straddle a switch is split there by the
-integrator's event location, so it never steps across a kink.
+one batched, certified solve per species.  Optionally (``split_regimes=True``)
+regime switches are located by event detection: a regime is the pattern of binding
+uptake bounds and growing members, which (with unique fluxes) is a function of the
+state alone and changes at the kinks, and a step that straddles a switch is split
+there.  In our benchmarks this did not improve accuracy, so it is not recommended
+by default.
 
 It changes the time discretisation, not the LPs: the answer converges to the
 same continuous dFBA solution as fixed-step Euler with dt -> 0.
@@ -104,7 +105,7 @@ class _RHS:
 def run_adaptive(comm: Community, adapter: ManyLPAdapter, E: int = 1, t_end: float = 48.0,
                  rtol: float = 1e-6, atol: float = 1e-9, method: str = "RK45",
                  perturb=None, mode: str = "pfba-unique", dilution: float = 0.0,
-                 min_biomass: float = 1e-9, t_eval=None, split_regimes: bool = True) -> AdaptiveResult:
+                 min_biomass: float = 1e-9, t_eval=None, split_regimes: bool = False) -> AdaptiveResult:
     """Integrate ``E`` members with an adaptive RK method (see module docstring)."""
     from scipy.integrate import solve_ivp
 
