@@ -42,8 +42,9 @@ the batch.
   only a few dozen critical regions over 48 h. More than 99.9% of LPs are certified from
   cache.
 - **Persistent basis atlas.** Certified bases can be saved per model and reused by later
-  runs with *any* diet or ensemble. Certificates, not answers, are stored, so reuse can
-  never change a result.
+  runs with *any* diet or ensemble. Certificates, not answers, are stored, so under a
+  unique flux rule (e.g. pFBA-unique) reuse can never change a result; under plain FBA it
+  can change which of several equally optimal vertices is returned.
 
 ### Relation to prior work
 
