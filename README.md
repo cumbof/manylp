@@ -26,20 +26,44 @@ that falls outside every cached critical region is re-solved, by a warm-started 
 simplex (HiGHS) on the CPU. Its new basis is then immediately propagated to the rest of
 the batch.
 
-- **Exact.** Every returned point is a basic optimal solution, certified by manylp's own
-  arithmetic (primal feasibility plus lexicographic dual feasibility), not an
-  ε-approximation.
+- **Exact.** Every returned point is a basic optimal solution (a vertex, not an
+  ε-approximation), certified by manylp's own double-precision arithmetic: primal
+  feasibility plus lexicographic dual feasibility at a tolerance of 1e-9, checked
+  independently of the solver that produced the basis. These are numerical certificates,
+  not rigorous interval or rational proofs; on a random sample they agree with exact
+  rational optima (SoPlex) to 1.7e-11.
 - **Unique fluxes.** Lexicographic objectives (e.g. max growth → min ‖v‖₁ → generic
   tie-break) are certified by a *single* basis. The certificate also proves when the
   optimum is unique, so trajectories no longer depend on which vertex a solver happens
   to return.
-- **Infeasibility certified too.** Farkas rays are cached and checked in batch.
+- **Infeasibility certified too.** Farkas rays are cached and checked in batch; the check
+  accounts for a floating-point error bound of the certificate itself.
 - **Temporal and ensemble coherence.** In a dFBA trajectory, a whole community visits
   only a few dozen critical regions over 48 h. More than 99.9% of LPs are certified from
   cache.
 - **Persistent basis atlas.** Certified bases can be saved per model and reused by later
   runs with *any* diet or ensemble. Certificates, not answers, are stored, so reuse can
   never change a result.
+
+### Relation to prior work
+
+Checking one basis against many right-hand sides is classical: stochastic programming
+calls it *bunching* (Wets 1983; Haugland & Wallace 1988; Kall & Wallace 1994, §3.10).
+manylp makes it batched, cheap (a precomputed affine law over only the parameters that
+move, evaluated as one GEMM per basis on a GPU or with fused CPU kernels), and certified
+(lexicographic uniqueness, Farkas infeasibility), with representative selection,
+propagation of new bases, a yield guard and a persistent atlas. `benchmarks/bunching.py`
+implements classical bunching as a baseline.
+
+### When to use it
+
+manylp pays one simplex solve per *critical region*, not per LP, so it wins when a batch of
+LPs sharing a matrix and objective has many more members than distinct optimal bases: time
+integration, ensembles, spatial grids, parameter sweeps, scenario analysis. On recorded
+genome-scale dFBA workloads it is 12–33× faster than HiGHS, Gurobi, Xpress, GLPK and GLOP on
+a CPU, 6.8× faster than classical bunching, and reaches 682,000 LP/s on one A100 for large
+ensembles. When nearly every LP needs its own basis, a conventional simplex code (or plain
+bunching) is faster; see the paper for the full picture.
 
 ## Install
 
@@ -113,6 +137,9 @@ The default backend reproduces historical muODE outputs byte-for-byte.
 | `manylp/reference.py` | independent reference solver and multi-process HiGHS baseline |
 | `manylp/pdhg.py` | batched restarted PDHG (first-order GPU baseline) |
 | `benchmarks/` | every experiment in the paper (see `benchmarks/run_*.sh`) |
+| `benchmarks/bunching.py` | classical bunching baseline (per-LP and batched) |
+| `benchmarks/external/` | the `dfba` package, surfinFBA, SoPlex exact and native Gurobi/Xpress lexicographic comparisons |
+| `paper/data/` | the result summaries behind every table and figure of the paper (`benchmarks/export_paper_data.py`) |
 | `tests/` | correctness against the independent reference, on CPU and GPU |
 
 ## Tests
