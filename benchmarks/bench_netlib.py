@@ -47,14 +47,15 @@ def load_mps(path):
 
 def _bunching_row(rec, lp, L, U, cpu, args):
     """Classical bunching (benchmarks/bunching.py) on the same scenarios, checked against manylp."""
-    from bunching import bunching_pool_solve
+    from bunching import BatchBunchingSolver, _full_bounds_batch, bunching_pool_solve
 
     g = cpu.register_group(lp, out_z=np.zeros(0, dtype=np.int64))
     t = time.perf_counter()
     sol = cpu.solve_batch(g, L, U, return_z=False)
     dt = time.perf_counter() - t
     rec["manylp-cpu"] = {"seconds": dt, "lps_per_second": args.B / dt, "distinct_bases": len(g.pool)}
-    for label, procs in (("bunching-p1", 1), (f"bunching-p{args.procs}", args.procs)):
+    variants = () if args.bunching_batch_only else (("bunching-p1", 1), (f"bunching-p{args.procs}", args.procs))
+    for label, procs in variants:
         st, obj, stats, secs = bunching_pool_solve(lp, L, U, n_procs=procs)
         decided = np.isin(st, (1, 2)) & np.isin(sol.status, (1, 2))
         both = (st == 1) & (sol.status == 1)
@@ -64,10 +65,31 @@ def _bunching_row(rec, lp, L, U, cpu, args):
                       "obj_rel_err_max": float((np.abs(obj[both] - sol.objective[both, 0]) /
                                                 np.maximum(1.0, np.abs(sol.objective[both, 0]))).max())
                       if both.any() else None}
+    bb = BatchBunchingSolver(lp)
+    LB, UB = _full_bounds_batch(lp, L, U)
+    t = time.perf_counter()
+    st, obj, _ = bb.solve_batch(LB, UB, np.arange(L.shape[0]))
+    secs = time.perf_counter() - t
+    decided = np.isin(st, (1, 2)) & np.isin(sol.status, (1, 2))
+    both = (st == 1) & (sol.status == 1)
+    rec["bunching-batch"] = {"seconds": secs, "lps_per_second": args.B / secs, **bb.stats(),
+                             "status_agreement": float((st[decided] == sol.status[decided]).mean()) if decided.any() else None,
+                             "undecided": int((~np.isin(st, (1, 2))).sum()),
+                             "obj_rel_err_max": float((np.abs(obj[both] - sol.objective[both, 0]) /
+                                                       np.maximum(1.0, np.abs(sol.objective[both, 0]))).max())
+                             if both.any() else None}
+    if args.bunching_batch_only:
+        bb = rec["bunching-batch"]
+        print(f"{rec['problem']:10s} manylp-cpu {rec['manylp-cpu']['lps_per_second']:9.0f} LP/s | bunching batch "
+              f"{bb['lps_per_second']:8.0f} LP/s ({bb['simplex_solves']} solves) | agree {bb['status_agreement']} "
+              f"err {bb['obj_rel_err_max']}", flush=True)
+        return rec
     b1, bp = rec["bunching-p1"], rec[f"bunching-p{args.procs}"]
     print(f"{rec['problem']:10s} manylp-cpu {rec['manylp-cpu']['lps_per_second']:9.0f} LP/s | bunching p1 "
           f"{b1['lps_per_second']:8.0f} LP/s ({b1['simplex_solves']} solves) | p{args.procs} {bp['lps_per_second']:8.0f} "
-          f"LP/s ({bp['simplex_solves']} solves) | agree {bp['status_agreement']} err {bp['obj_rel_err_max']}", flush=True)
+          f"LP/s ({bp['simplex_solves']} solves) | batch {rec['bunching-batch']['lps_per_second']:8.0f} LP/s "
+          f"({rec['bunching-batch']['simplex_solves']} solves) | agree {bp['status_agreement']} err {bp['obj_rel_err_max']}",
+          flush=True)
     return rec
 
 
@@ -82,6 +104,8 @@ def main():
     ap.add_argument("--bunching", action="store_true",
                     help="run only the classical bunching baseline (1 and --procs processes) plus manylp-cpu "
                          "for agreement; the scenarios are identical to the main run (same seed)")
+    ap.add_argument("--bunching-batch-only", action="store_true",
+                    help="with --bunching: run only the batched (Kall & Wallace) variant")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
     files = sorted(glob.glob(f"{args.dir}/*.mps"))
@@ -108,7 +132,8 @@ def main():
         rec = {"problem": name, "m": m, "n": n, "nnz": int(A.nnz), "B": args.B, "p": int(lp.p)}
         if args.bunching:
             rows.append(_bunching_row(rec, lp, L, U, cpu, args))
-            json.dump(rows, open(f"{args.out}/netlib_bunching_B{args.B}.json", "w"), indent=1)
+            tag = "bunching_batch" if args.bunching_batch_only else "bunching"
+            json.dump(rows, open(f"{args.out}/netlib_{tag}_B{args.B}.json", "w"), indent=1)
             continue
         res = {}
         for label, solver in (("manylp-cpu", cpu), ("manylp-gpu", gpu)):

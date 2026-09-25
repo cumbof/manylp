@@ -790,7 +790,7 @@ class ProcPool(Adapter):
             e.shutdown(cancel_futures=True)
 
 
-from bunching import Bunching  # noqa: E402  (benchmarks/ is on sys.path)
+from bunching import Bunching, BunchingBatch  # noqa: E402,F401  (benchmarks/ is on sys.path)
 
 REGISTRY = {
     "bunching": Bunching, "highs": Highs, "glpk": GLPK, "scipy": ScipyLinprog, "glop": Glop, "ortools-pdlp": OrtoolsPDLP,

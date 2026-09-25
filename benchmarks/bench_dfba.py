@@ -51,6 +51,9 @@ def make_adapter(name: str, files):
         return HighsLoopAdapter(warm=False, n_workers=int(name.split("x")[-1]))
     if name == "scipy-linprog":
         return ScipyLinprogAdapter()
+    if name == "bunching-batch":             # batched (Kall & Wallace) bunching, one process
+        from bunching import BunchingBatchAdapter
+        return BunchingBatchAdapter()
     if name.startswith("bunching-p"):         # classical bunching baseline, plain FBA only
         from bunching import BunchingProcAdapter
         return BunchingProcAdapter(n_procs=int(name.split("-p")[-1]))

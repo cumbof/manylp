@@ -46,6 +46,8 @@ def make(spec: str):
         return C.MPAX(eps=float(spec.split("-e")[-1]) if "-e" in spec else 1e-6)
     if spec.startswith("ourpdhg"):
         return C.OurPDHG(eps=float(spec.split("-e")[-1]) if "-e" in spec else 1e-6)
+    if spec.startswith("bunching-batch"):   # Kall & Wallace bunching, one process: bunching-batch[-k<checks>]
+        return C.BunchingBatch(max_checks=int(spec.split("-k")[1]) if "-k" in spec else 32)
     # per-LP CPU solvers: <name>[-args]-p<N>
     base, procs = spec.rsplit("-p", 1)
     n = int(procs)

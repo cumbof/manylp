@@ -112,6 +112,161 @@ class BunchingSolver:
                 "bases": len(self.cache), "uncached": self.failed}
 
 
+class BatchBunchingSolver(BunchingSolver):
+    """Bunching as Kall & Wallace describe it: each basis is checked against *all* pending LPs.
+
+    For a batch: every LP first tries its own previous basis (members grouped by it),
+    then up to ``max_checks`` recently used bases are checked against all pending
+    LPs at once (one multi-right-hand-side sparse LU solve per basis).  The first LP
+    still pending is solved by warm-started dual simplex, and its new basis is
+    checked against every remaining LP before the next solve.  This is manylp's
+    certify-and-propagate loop without batched GEMMs over a lazy affine law, GPU
+    kernels, representative selection, a yield guard, lexicographic stages, Farkas
+    certificates or an atlas.  Single-threaded (SuperLU).
+    """
+
+    def _check_many(self, b, LB, UB):
+        ZN = np.where(b.st == AT_UPPER, UB[:, b.nb], np.where(b.st == AT_ZERO, 0.0, LB[:, b.nb]))
+        fin = np.isfinite(ZN).all(axis=1)
+        ZN = np.where(np.isfinite(ZN), ZN, 0.0)
+        ZB = b.lu.solve(np.asarray(-(b.A_nb @ ZN.T)))            # (m, P)
+        t = self.tol * np.maximum(1.0, np.abs(ZB))
+        ok = fin & np.all(ZB >= LB[:, b.basic].T - t, axis=0) & np.all(ZB <= UB[:, b.basic].T + t, axis=0)
+        return ok, ZB, ZN
+
+    def solve_batch(self, LB, UB, keys):
+        """Return ``(status (P,), objective (P,), Z (P, N))`` for LP bounds ``LB, UB`` of shape (P, N)."""
+        P, N = LB.shape
+        status = np.zeros(P, dtype=np.int64)
+        Z = np.zeros((P, N))
+        pending = np.ones(P, dtype=bool)
+
+        def accept(b, idx):
+            if idx.size == 0:
+                return 0
+            ok, ZB, ZN = self._check_many(b, LB[idx], UB[idx])
+            self.checks += 1
+            sel = idx[ok]
+            if sel.size:
+                Z[np.ix_(sel, b.basic)] = ZB[:, ok].T
+                Z[np.ix_(sel, b.nb)] = ZN[ok]
+                status[sel] = OPTIMAL
+                pending[sel] = False
+                self.hits += sel.size
+                for k in keys[sel]:
+                    self.last[int(k)] = b
+            return sel.size
+
+        groups: dict = {}
+        for i, k in enumerate(keys):
+            b = self.last.get(int(k))
+            if b is not None:
+                groups.setdefault(id(b), (b, []))[1].append(i)
+        for b, idx in groups.values():
+            accept(b, np.asarray(idx))
+        used = []
+        for b in self.cache[: self.max_checks]:
+            idx = np.nonzero(pending)[0]
+            if idx.size == 0:
+                break
+            if accept(b, idx):
+                used.append(b)
+        for b in reversed(used):                       # most recently useful first
+            self.cache.remove(b)
+            self.cache.insert(0, b)
+        while pending.any():
+            i = int(np.nonzero(pending)[0][0])
+            own = self.last.get(int(keys[i]))
+            warm = own.zst if own is not None else (self.cache[0].zst if self.cache else None)
+            r = self.hs.solve(LB[i], UB[i], warm_status=warm)
+            self.solves += 1
+            if r.status != OPTIMAL:
+                status[i] = r.status
+                pending[i] = False
+                continue
+            try:
+                b = _Basis(self.lp, r.basic, r.zstatus)
+            except RuntimeError:
+                self.failed += 1
+                status[i], Z[i], pending[i] = OPTIMAL, r.z, False
+                continue
+            self.cache.insert(0, b)
+            del self.cache[self.max_bases:]
+            accept(b, np.nonzero(pending)[0])
+            if pending[i]:                             # its own basis failed the check (tolerance)
+                status[i], Z[i], pending[i] = OPTIMAL, r.z, False
+                self.last[int(keys[i])] = b
+        obj = Z @ self.c
+        obj[status != OPTIMAL] = np.nan
+        return status, obj, Z
+
+
+def _full_bounds_batch(lp, Lp, Up):
+    LB = np.tile(lp.lb_z, (Lp.shape[0], 1))
+    UB = np.tile(lp.ub_z, (Lp.shape[0], 1))
+    LB[:, lp.param_z] = Lp
+    UB[:, lp.param_z] = Up
+    return LB, UB
+
+
+class BunchingBatch:
+    """Batched (Kall & Wallace) bunching for the recorded workloads, one process."""
+
+    batch = True
+    device = "cpu"
+    warm = True
+
+    def __init__(self, max_checks: int = 32):
+        self.max_checks = max_checks
+        self.name = f"bunching-batch-k{max_checks}"
+
+    def setup(self, models):
+        from manylp.fba import compile_fba
+
+        self.models = models
+        self.probs = [compile_fba(m, mode="fba") for m in models]
+        self.solvers = {}
+
+    def solve(self, s, ex_lb, member_ids):
+        p = self.probs[s]
+        sv = self.solvers.get(s)
+        if sv is None:
+            sv = self.solvers[s] = BatchBunchingSolver(p.lp, max_checks=self.max_checks)
+        LB, UB = _full_bounds_batch(p.lp, *p.param_bounds(ex_lb))
+        st, obj, Z = sv.solve_batch(LB, UB, np.asarray(member_ids))
+        return st == OPTIMAL, obj, p.fluxes(Z[:, p.out_z()])
+
+    def stats(self):
+        tot = {}
+        for sv in self.solvers.values():
+            for k, v in sv.stats().items():
+                tot[k] = tot.get(k, 0) + v
+        return tot
+
+    def close(self):
+        pass
+
+
+class BunchingBatchAdapter(BunchingBatch):
+    """The same for the dFBA driver (``bench_dfba.py``): returns growth and exchange fluxes."""
+
+    def setup(self, models, mode):
+        if mode != "fba":
+            raise ValueError("the bunching baseline implements plain FBA (one objective) only")
+        super().setup(models)
+
+    def solve(self, s, ex_lb, member_ids):
+        p = self.probs[s]
+        sv = self.solvers.get(s)
+        if sv is None:
+            sv = self.solvers[s] = BatchBunchingSolver(p.lp, max_checks=self.max_checks)
+        LB, UB = _full_bounds_batch(p.lp, *p.param_bounds(ex_lb))
+        st, obj, Z = sv.solve_batch(LB, UB, np.asarray(member_ids))
+        ok = st == OPTIMAL
+        oz = p.out_z(p.model.exchanges)
+        return np.where(ok, obj, 0.0), p.fluxes(Z[:, oz], p.model.exchanges) * ok[:, None], ok
+
+
 # ---------------------------------------------------------------------------
 # cmp_solvers adapter (per-LP; wrap in ProcPool for 1 or 32 processes)
 # ---------------------------------------------------------------------------
