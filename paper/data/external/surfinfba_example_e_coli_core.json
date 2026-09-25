@@ -1,0 +1,15 @@
+{
+ "tool": "surfinFBA",
+ "case": "package example (BiGG_model_examples.py) on e_coli_core",
+ "wall_seconds": 0.7376683065667748,
+ "n_time_points": 1001,
+ "t_last": 1.0000000000000007,
+ "biomass_first_last": [
+  1.0,
+  0.49447557026660105
+ ],
+ "status": [
+  "Complete"
+ ],
+ "gurobi_optimize_calls": 3
+}

@@ -1,0 +1,243 @@
+{
+ "scenario": "diauxie",
+ "rows": [
+  {
+   "scheme": "RK45 rtol=1e-06",
+   "E": 1,
+   "wall_seconds": 0.8374270042404532,
+   "wall_per_trajectory": 0.8374270042404532,
+   "lps": 1408,
+   "rhs_evals": 704,
+   "regime_switches": 0,
+   "max_rel_err_biomass": 8.090985194111841e-05,
+   "max_rel_err_glc_ac": 0.0019264990679981788
+  },
+  {
+   "scheme": "RK45 rtol=1e-06 + regime events",
+   "E": 1,
+   "wall_seconds": 1.9814372714608908,
+   "wall_per_trajectory": 1.9814372714608908,
+   "lps": 2586,
+   "rhs_evals": 858,
+   "regime_switches": 8,
+   "max_rel_err_biomass": 8.090985194111841e-05,
+   "max_rel_err_glc_ac": 0.0020420754374709106
+  },
+  {
+   "scheme": "RK45 rtol=1e-08",
+   "E": 1,
+   "wall_seconds": 1.6466464614495635,
+   "wall_per_trajectory": 1.6466464614495635,
+   "lps": 2716,
+   "rhs_evals": 1358,
+   "regime_switches": 0,
+   "max_rel_err_biomass": 7.981175103316236e-05,
+   "max_rel_err_glc_ac": 0.0019019365640010578
+  },
+  {
+   "scheme": "RK45 rtol=1e-08 + regime events",
+   "E": 1,
+   "wall_seconds": 2.440760189667344,
+   "wall_per_trajectory": 2.440760189667344,
+   "lps": 3948,
+   "rhs_evals": 1562,
+   "regime_switches": 6,
+   "max_rel_err_biomass": 7.981175103316236e-05,
+   "max_rel_err_glc_ac": 0.001902328018216545
+  },
+  {
+   "scheme": "Euler dt=0.01",
+   "E": 1,
+   "wall_seconds": 0.9439040087163448,
+   "wall_per_trajectory": 0.9439040087163448,
+   "lps": 2402,
+   "max_rel_err_biomass": 0.007855624948129098,
+   "max_rel_err_glc_ac": 0.2054873257767851
+  },
+  {
+   "scheme": "Euler dt=0.001",
+   "E": 1,
+   "wall_seconds": 8.267927185632288,
+   "wall_per_trajectory": 8.267927185632288,
+   "lps": 24002,
+   "max_rel_err_biomass": 0.0007178240326491827,
+   "max_rel_err_glc_ac": 0.017334784621042036
+  },
+  {
+   "scheme": "RK45 rtol=1e-06",
+   "E": 32,
+   "wall_seconds": 13.626380760222673,
+   "wall_per_trajectory": 0.42582439875695854,
+   "lps": 271232,
+   "rhs_evals": 4238,
+   "regime_switches": 0,
+   "max_rel_err_biomass": 9.729191705473472e-05,
+   "max_rel_err_glc_ac": 0.0048422840602392455
+  },
+  {
+   "scheme": "RK45 rtol=1e-06 + regime events",
+   "E": 32,
+   "wall_seconds": 49.89084879029542,
+   "wall_per_trajectory": 1.559089024696732,
+   "lps": 335808,
+   "rhs_evals": 4372,
+   "regime_switches": 10,
+   "max_rel_err_biomass": 9.728820657275754e-05,
+   "max_rel_err_glc_ac": 0.0039979663730039215
+  },
+  {
+   "scheme": "RK45 rtol=1e-08",
+   "E": 32,
+   "wall_seconds": 27.819044006988406,
+   "wall_per_trajectory": 0.8693451252183877,
+   "lps": 569600,
+   "rhs_evals": 8900,
+   "regime_switches": 0,
+   "max_rel_err_biomass": 9.670111830162248e-05,
+   "max_rel_err_glc_ac": 0.0032966085845622705
+  },
+  {
+   "scheme": "RK45 rtol=1e-08 + regime events",
+   "E": 32,
+   "wall_seconds": 30.78863991983235,
+   "wall_per_trajectory": 0.9621449974947609,
+   "lps": 634496,
+   "rhs_evals": 8692,
+   "regime_switches": 7,
+   "max_rel_err_biomass": 9.669740523811834e-05,
+   "max_rel_err_glc_ac": 0.0033009756254890536
+  },
+  {
+   "scheme": "Euler dt=0.01",
+   "E": 32,
+   "wall_seconds": 2.837852166965604,
+   "wall_per_trajectory": 0.08868288021767512,
+   "lps": 76864,
+   "max_rel_err_biomass": 0.00950658512368837,
+   "max_rel_err_glc_ac": 0.4047901637312987
+  },
+  {
+   "scheme": "Euler dt=0.001",
+   "E": 32,
+   "wall_seconds": 21.458289878442883,
+   "wall_per_trajectory": 0.6705715587013401,
+   "lps": 768064,
+   "max_rel_err_biomass": 0.0008696438850938126,
+   "max_rel_err_glc_ac": 0.030261019443932877
+  }
+ ],
+ "deviation_from_manylp_rk45_1e-8": {
+  "_against": {
+   "dfba_diauxie_fba_Harwood_rtol0.0001.npz": "RK45 rtol=1e-08|E1",
+   "dfba_diauxie_fba_Harwood_rtol1e-06.npz": "RK45 rtol=1e-08|E1",
+   "dfba_diauxie_fba_Harwood_rtol1e-08.npz": "RK45 rtol=1e-08|E1",
+   "dfba_diauxie_pfba-unique-weighted0.0001_Harwood_rtol1e-08.npz": "RK45 rtol=1e-08|E1",
+   "dfba_diauxie_pfba-unique-weighted1e-05_Harwood_rtol0.0001.npz": "RK45 rtol=1e-08|E1",
+   "dfba_diauxie_pfba-unique-weighted1e-05_Harwood_rtol1e-06.npz": "RK45 rtol=1e-08|E1",
+   "dfba_diauxie_pfba-unique-weighted1e-05_Harwood_rtol1e-06_E32.npz": "RK45 rtol=1e-08|E32",
+   "dfba_diauxie_pfba-unique-weighted1e-05_Harwood_rtol1e-08.npz": "RK45 rtol=1e-08|E1",
+   "dfba_diauxie_pfba-unique-weighted1e-05_Harwood_rtol1e-08_E32_tout0.0001.npz": "RK45 rtol=1e-08|E32",
+   "dfba_diauxie_pfba-weighted0.0001_Harwood_rtol1e-08.npz": "RK45 rtol=1e-08|E1",
+   "dfba_diauxie_pfba-weighted0.001_Harwood_rtol1e-06.npz": "RK45 rtol=1e-08|E1",
+   "dfba_diauxie_pfba-weighted1e-05_Harwood_rtol0.0001.npz": "RK45 rtol=1e-08|E1",
+   "dfba_diauxie_pfba-weighted1e-05_Harwood_rtol1e-06.npz": "RK45 rtol=1e-08|E1",
+   "dfba_diauxie_pfba-weighted1e-05_Harwood_rtol1e-06_E32.npz": "RK45 rtol=1e-08|E32",
+   "dfba_diauxie_pfba-weighted1e-05_Harwood_rtol1e-08.npz": "RK45 rtol=1e-08|E1",
+   "dfba_diauxie_pfba-weighted1e-05_Harwood_rtol1e-08_E32.npz": "RK45 rtol=1e-08|E32",
+   "dfba_diauxie_pfba-weighted1e-05_Harwood_rtol1e-08_E32_tout0.0001.npz": "RK45 rtol=1e-08|E32",
+   "dfba_diauxie_pfba-weighted1e-05_Harwood_rtol1e-08_tout0.0001.npz": "RK45 rtol=1e-08|E1",
+   "dfba_diauxie_pfba-weighted1e-05_Harwood_rtol1e-10.npz": "RK45 rtol=1e-08|E1",
+   "dfba_diauxie_pfba-weighted1e-05_direct_rtol1e-06.npz": "RK45 rtol=1e-08|E1",
+   "dfba_diauxie_pfba-weighted1e-05_direct_rtol1e-08.npz": "RK45 rtol=1e-08|E1",
+   "dfba_diauxie_pfba-weighted1e-06_Harwood_rtol1e-08.npz": "RK45 rtol=1e-08|E1"
+  },
+  "dfba_diauxie_fba_Harwood_rtol0.0001.npz": {
+   "max_rel_dev_biomass": 0.03144123775928902,
+   "max_rel_dev_glc_ac": 11.11329180377242
+  },
+  "dfba_diauxie_fba_Harwood_rtol1e-06.npz": {
+   "max_rel_dev_biomass": 0.031422344834968155,
+   "max_rel_dev_glc_ac": 11.351575381297566
+  },
+  "dfba_diauxie_fba_Harwood_rtol1e-08.npz": {
+   "max_rel_dev_biomass": 0.031421868592969276,
+   "max_rel_dev_glc_ac": 11.354389302967764
+  },
+  "dfba_diauxie_pfba-unique-weighted0.0001_Harwood_rtol1e-08.npz": {
+   "max_rel_dev_biomass": 5.883682762069592e-07,
+   "max_rel_dev_glc_ac": 0.0015885367176795525
+  },
+  "dfba_diauxie_pfba-unique-weighted1e-05_Harwood_rtol0.0001.npz": {
+   "max_rel_dev_biomass": 0.0017819074315322898,
+   "max_rel_dev_glc_ac": 0.06897275393110788
+  },
+  "dfba_diauxie_pfba-unique-weighted1e-05_Harwood_rtol1e-06.npz": {
+   "max_rel_dev_biomass": 6.147014272414315e-05,
+   "max_rel_dev_glc_ac": 0.018045345424456846
+  },
+  "dfba_diauxie_pfba-unique-weighted1e-05_Harwood_rtol1e-06_E32.npz": {
+   "max_rel_dev_biomass": 6.258360385892785e-05,
+   "max_rel_dev_glc_ac": 0.027832740556987978
+  },
+  "dfba_diauxie_pfba-unique-weighted1e-05_Harwood_rtol1e-08.npz": {
+   "max_rel_dev_biomass": 5.883682770090126e-07,
+   "max_rel_dev_glc_ac": 0.0015885366383521957
+  },
+  "dfba_diauxie_pfba-unique-weighted1e-05_Harwood_rtol1e-08_E32_tout0.0001.npz": {
+   "max_rel_dev_biomass": 1.2428501237821632e-06,
+   "max_rel_dev_glc_ac": 0.0020940197514072926
+  },
+  "dfba_diauxie_pfba-weighted0.0001_Harwood_rtol1e-08.npz": {
+   "max_rel_dev_biomass": 5.883682762069592e-07,
+   "max_rel_dev_glc_ac": 0.0015885209916185422
+  },
+  "dfba_diauxie_pfba-weighted0.001_Harwood_rtol1e-06.npz": {
+   "max_rel_dev_biomass": 0.17684203519699226,
+   "max_rel_dev_glc_ac": 77.93371079476323
+  },
+  "dfba_diauxie_pfba-weighted1e-05_Harwood_rtol0.0001.npz": {
+   "max_rel_dev_biomass": 0.0017819074315322898,
+   "max_rel_dev_glc_ac": 0.05466144520206743
+  },
+  "dfba_diauxie_pfba-weighted1e-05_Harwood_rtol1e-06.npz": {
+   "max_rel_dev_biomass": 6.147014272414315e-05,
+   "max_rel_dev_glc_ac": 0.018045177548934973
+  },
+  "dfba_diauxie_pfba-weighted1e-05_Harwood_rtol1e-06_E32.npz": {
+   "max_rel_dev_biomass": 6.258360385892785e-05,
+   "max_rel_dev_glc_ac": 0.027828855907895855
+  },
+  "dfba_diauxie_pfba-weighted1e-05_Harwood_rtol1e-08.npz": {
+   "max_rel_dev_biomass": 5.883682770090126e-07,
+   "max_rel_dev_glc_ac": 0.0015885209137389462
+  },
+  "dfba_diauxie_pfba-weighted1e-05_Harwood_rtol1e-08_E32.npz": {
+   "max_rel_dev_biomass": 7.133596627378571e-07,
+   "max_rel_dev_glc_ac": 0.025161446371667787
+  },
+  "dfba_diauxie_pfba-weighted1e-05_Harwood_rtol1e-08_E32_tout0.0001.npz": {
+   "max_rel_dev_biomass": 1.2428501237821632e-06,
+   "max_rel_dev_glc_ac": 0.0020940181938464537
+  },
+  "dfba_diauxie_pfba-weighted1e-05_Harwood_rtol1e-08_tout0.0001.npz": {
+   "max_rel_dev_biomass": 7.138906267583508e-07,
+   "max_rel_dev_glc_ac": 0.0015761200953493511
+  },
+  "dfba_diauxie_pfba-weighted1e-05_Harwood_rtol1e-10.npz": {
+   "max_rel_dev_biomass": 0.20276444460404164,
+   "max_rel_dev_glc_ac": 109.50459314555289
+  },
+  "dfba_diauxie_pfba-weighted1e-05_direct_rtol1e-06.npz": {
+   "max_rel_dev_biomass": 0.0020979891635067517,
+   "max_rel_dev_glc_ac": 0.10079060349933668
+  },
+  "dfba_diauxie_pfba-weighted1e-05_direct_rtol1e-08.npz": {
+   "max_rel_dev_biomass": 8.745016157123867e-05,
+   "max_rel_dev_glc_ac": 0.029608548715000457
+  },
+  "dfba_diauxie_pfba-weighted1e-06_Harwood_rtol1e-08.npz": {
+   "max_rel_dev_biomass": 5.883682770090126e-07,
+   "max_rel_dev_glc_ac": 0.0015885209137389462
+  }
+ }
+}

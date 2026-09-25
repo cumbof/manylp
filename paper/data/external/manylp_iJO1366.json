@@ -1,0 +1,156 @@
+{
+ "scenario": "iJO1366",
+ "rows": [
+  {
+   "scheme": "RK45 rtol=1e-06",
+   "E": 1,
+   "wall_seconds": 3.4306287337094545,
+   "wall_per_trajectory": 3.4306287337094545,
+   "lps": 638,
+   "rhs_evals": 638,
+   "regime_switches": 0,
+   "max_rel_err_biomass": 0.00011520999647223093,
+   "max_rel_err_glc_ac": 0.0032670702779879044
+  },
+  {
+   "scheme": "RK45 rtol=1e-06 + regime events",
+   "E": 1,
+   "wall_seconds": 3.941636800765991,
+   "wall_per_trajectory": 3.941636800765991,
+   "lps": 1244,
+   "rhs_evals": 738,
+   "regime_switches": 10,
+   "max_rel_err_biomass": 0.00011520933047795605,
+   "max_rel_err_glc_ac": 0.003278069817266856
+  },
+  {
+   "scheme": "RK45 rtol=1e-08",
+   "E": 1,
+   "wall_seconds": 6.470781920477748,
+   "wall_per_trajectory": 6.470781920477748,
+   "lps": 1364,
+   "rhs_evals": 1364,
+   "regime_switches": 0,
+   "max_rel_err_biomass": 0.00011197916387154206,
+   "max_rel_err_glc_ac": 0.003022710980936154
+  },
+  {
+   "scheme": "RK45 rtol=1e-08 + regime events",
+   "E": 1,
+   "wall_seconds": 8.910484155640006,
+   "wall_per_trajectory": 8.910484155640006,
+   "lps": 3120,
+   "rhs_evals": 1724,
+   "regime_switches": 27,
+   "max_rel_err_biomass": 0.00011197849786200067,
+   "max_rel_err_glc_ac": 0.0030450358655812505
+  },
+  {
+   "scheme": "Euler dt=0.01",
+   "E": 1,
+   "wall_seconds": 2.4511176804080606,
+   "wall_per_trajectory": 2.4511176804080606,
+   "lps": 1201,
+   "max_rel_err_biomass": 0.010993530401566936,
+   "max_rel_err_glc_ac": 0.3559101992114184
+  },
+  {
+   "scheme": "Euler dt=0.001",
+   "E": 1,
+   "wall_seconds": 8.809595494531095,
+   "wall_per_trajectory": 8.809595494531095,
+   "lps": 12001,
+   "max_rel_err_biomass": 0.0010067317876128155,
+   "max_rel_err_glc_ac": 0.02776366997342643
+  },
+  {
+   "scheme": "RK45 rtol=1e-06",
+   "E": 8,
+   "wall_seconds": 9.121604918502271,
+   "wall_per_trajectory": 1.140200614812784,
+   "lps": 13360,
+   "rhs_evals": 1670,
+   "regime_switches": 0
+  },
+  {
+   "scheme": "RK45 rtol=1e-06 + regime events",
+   "E": 8,
+   "wall_seconds": 9.60563264042139,
+   "wall_per_trajectory": 1.2007040800526738,
+   "lps": 16248,
+   "rhs_evals": 1752,
+   "regime_switches": 2
+  },
+  {
+   "scheme": "RK45 rtol=1e-08",
+   "E": 8,
+   "wall_seconds": 163.17626385297626,
+   "wall_per_trajectory": 20.397032981622033,
+   "lps": 31120,
+   "rhs_evals": 3890,
+   "regime_switches": 0
+  },
+  {
+   "scheme": "RK45 rtol=1e-08 + regime events",
+   "E": 8,
+   "wall_seconds": 238.89552854653448,
+   "wall_per_trajectory": 29.86194106831681,
+   "lps": 34480,
+   "rhs_evals": 3770,
+   "regime_switches": 3
+  },
+  {
+   "scheme": "Euler dt=0.01",
+   "E": 8,
+   "wall_seconds": 5.136243932880461,
+   "wall_per_trajectory": 0.6420304916100577,
+   "lps": 9608
+  },
+  {
+   "scheme": "Euler dt=0.001",
+   "E": 8,
+   "wall_seconds": 18.84275361057371,
+   "wall_per_trajectory": 2.3553442013217136,
+   "lps": 96008
+  }
+ ],
+ "deviation_from_manylp_rk45_1e-8": {
+  "_against": {
+   "dfba_iJO1366_fba_Harwood_rtol1e-06_T0.5.npz": "RK45 rtol=1e-08|E1",
+   "dfba_iJO1366_fba_direct_rtol1e-06.npz": "RK45 rtol=1e-08|E1",
+   "dfba_iJO1366_fba_direct_rtol1e-06_T0.5.npz": "RK45 rtol=1e-08|E1",
+   "dfba_iJO1366_pfba-unique-weighted1e-05_Harwood_rtol1e-06_T0.5.npz": "RK45 rtol=1e-08|E1",
+   "dfba_iJO1366_pfba-unique-weighted1e-05_direct_rtol1e-06.npz": "RK45 rtol=1e-08|E1",
+   "dfba_iJO1366_pfba-unique-weighted1e-05_direct_rtol1e-06_E8.npz": "RK45 rtol=1e-08|E8",
+   "dfba_iJO1366_pfba-unique-weighted1e-05_direct_rtol1e-06_tout0.0001.npz": "RK45 rtol=1e-08|E1"
+  },
+  "dfba_iJO1366_fba_Harwood_rtol1e-06_T0.5.npz": {
+   "max_rel_dev_biomass": 0.20202027057431202,
+   "max_rel_dev_glc_ac": 0.9972907970167175
+  },
+  "dfba_iJO1366_fba_direct_rtol1e-06.npz": {
+   "max_rel_dev_biomass": 0.004015478805615783,
+   "max_rel_dev_glc_ac": 0.20995891979710002
+  },
+  "dfba_iJO1366_fba_direct_rtol1e-06_T0.5.npz": {
+   "max_rel_dev_biomass": 0.0005033071119450402,
+   "max_rel_dev_glc_ac": 0.0017026566812726731
+  },
+  "dfba_iJO1366_pfba-unique-weighted1e-05_Harwood_rtol1e-06_T0.5.npz": {
+   "max_rel_dev_biomass": 0.2020202705743112,
+   "max_rel_dev_glc_ac": 0.9972907970167147
+  },
+  "dfba_iJO1366_pfba-unique-weighted1e-05_direct_rtol1e-06.npz": {
+   "max_rel_dev_biomass": 0.004015478805626041,
+   "max_rel_dev_glc_ac": 0.2099589197980554
+  },
+  "dfba_iJO1366_pfba-unique-weighted1e-05_direct_rtol1e-06_E8.npz": {
+   "max_rel_dev_biomass": 0.004232658168879318,
+   "max_rel_dev_glc_ac": 0.23491397567584896
+  },
+  "dfba_iJO1366_pfba-unique-weighted1e-05_direct_rtol1e-06_tout0.0001.npz": {
+   "max_rel_dev_biomass": 0.0008200423383084174,
+   "max_rel_dev_glc_ac": 0.04341176092681272
+  }
+ }
+}

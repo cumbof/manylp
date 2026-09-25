@@ -1,0 +1,35 @@
+{
+ "solver": "bunching-p32",
+ "mode": "fba",
+ "E": 64,
+ "t_end": 48.0,
+ "dt": 0.1,
+ "species": [
+  "A_muciniphila_BAA835",
+  "B_fragilis_NCTC9343",
+  "B_longum_NCC2705",
+  "B_thetaiotaomicron_VPI5482",
+  "Bl_obeum_A2162",
+  "C_comes_ATCC27758",
+  "E_rectale_ATCC33656",
+  "F_prausnitzii_A2165",
+  "L_acidophilus_NCFM",
+  "P_copri_DSM18205",
+  "R_bromii_L263",
+  "R_intestinalis_L182"
+ ],
+ "n_lps": 369408,
+ "solve_seconds": 93.22686573304236,
+ "wall_seconds": 97.70576816797256,
+ "lps_per_second": 3962.4629348562435,
+ "solver_stats": {
+  "checks": 384336,
+  "hits": 368027,
+  "simplex_solves": 1381,
+  "bases": 1381,
+  "uncached": 0
+ },
+ "pool_sizes": null,
+ "host": "lri-ts-02.lerner.ccf.org",
+ "sigma": 0.3
+}

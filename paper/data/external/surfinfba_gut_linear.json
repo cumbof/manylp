@@ -1,0 +1,75 @@
+{
+ "tool": "surfinFBA",
+ "version": "0.9.0 (git master)",
+ "lp_solver": "Gurobi (13, 0, 3) (size-limited pip licence)",
+ "integrator": "scipy.integrate.ode('vode') + basis re-initialisation",
+ "scenario": "gut",
+ "kinetics": "linear u_j = kappa_j y_j, kappa_j = Vmax/(Km + M0_j) (Vmax/Km if M0_j = 0)",
+ "relax_lb": false,
+ "initres": 0.001,
+ "note": "gut diet caps (min(MM, max_uptake)) and influx are not representable; kappa*y bounds only",
+ "build_seconds": 41.54523475654423,
+ "lp_sizes": [
+  {
+   "vars": 1347,
+   "ineq_rows": 3134,
+   "eq_rows": 1190
+  },
+  {
+   "vars": 1811,
+   "ineq_rows": 4062,
+   "eq_rows": 1473
+  },
+  {
+   "vars": 1368,
+   "ineq_rows": 3176,
+   "eq_rows": 1070
+  },
+  {
+   "vars": 1810,
+   "ineq_rows": 4060,
+   "eq_rows": 1475
+  },
+  {
+   "vars": 972,
+   "ineq_rows": 2384,
+   "eq_rows": 879
+  },
+  {
+   "vars": 1285,
+   "ineq_rows": 3010,
+   "eq_rows": 1108
+  },
+  {
+   "vars": 1523,
+   "ineq_rows": 3486,
+   "eq_rows": 1300
+  },
+  {
+   "vars": 1399,
+   "ineq_rows": 3238,
+   "eq_rows": 1211
+  },
+  {
+   "vars": 1281,
+   "ineq_rows": 3002,
+   "eq_rows": 1069
+  },
+  {
+   "vars": 1561,
+   "ineq_rows": 3562,
+   "eq_rows": 1367
+  },
+  {
+   "vars": 1547,
+   "ineq_rows": 3534,
+   "eq_rows": 1351
+  },
+  {
+   "vars": 1664,
+   "ineq_rows": 3768,
+   "eq_rows": 1371
+  }
+ ],
+ "error": "GurobiError: Model too large for size-limited license; visit https://gurobi.com/unrestricted for more information"
+}

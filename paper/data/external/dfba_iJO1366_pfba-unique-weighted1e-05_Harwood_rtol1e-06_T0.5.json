@@ -1,0 +1,67 @@
+{
+ "tool": "dfba",
+ "version": "0.1.8",
+ "lp_solver": "GLPK (simplex, via swiglpk/optlang)",
+ "integrator": "SUNDIALS IDA DAE, LP re-solved at basis-infeasibility events (Harwood)",
+ "tout": 0.001,
+ "scenario": "iJO1366",
+ "mode": "pfba-unique-weighted",
+ "rtol": 1e-06,
+ "atol": 1e-06,
+ "t_end": 0.5,
+ "eps": 1e-05,
+ "stderr_tail": "",
+ "build_seconds": 6.4508710000664,
+ "simulate_seconds": 488.71688241139054,
+ "jit_seconds": 1.1789895137771964,
+ "integrate_seconds": 487.53789289761335,
+ "cpu_seconds_reported": 484.571,
+ "glpk_simplex_calls": 1,
+ "lp_reinitialisations": 1,
+ "infeasible_stop": false,
+ "ida_steps": 0,
+ "ida_residual_evals": 0,
+ "terminated_at": 0.4990000000000004,
+ "wall_seconds": 495.16775341145694,
+ "max_rel_err_biomass": 0.20201049170828844,
+ "max_rel_err_glc_ac": 0.9973631184675158,
+ "max_rel_err_per_product": {
+  "glc__D_e": 0.0013169135430208846,
+  "ac_e": 0.9973631184675158
+ },
+ "reference": "manylp run_dfba Euler dt=0.0001",
+ "trajectory": {
+  "t": [
+   0.0,
+   0.1,
+   0.2,
+   0.30000000000000004,
+   0.4,
+   0.5
+  ],
+  "biomass_total": [
+   0.03,
+   0.030757910781015696,
+   0.03153494531809082,
+   0.03233156812329892,
+   0.03314822276768582,
+   0.03397692285033883
+  ],
+  "glc__D_e": [
+   15.0,
+   14.970602621724556,
+   14.940463221435863,
+   14.909563761489036,
+   14.877887016620296,
+   14.845742748852143
+  ],
+  "ac_e": [
+   0.0,
+   0.045843129452252836,
+   0.09284350489169502,
+   0.14102926375141908,
+   0.1904272765549376,
+   0.2405544955933538
+  ]
+ }
+}

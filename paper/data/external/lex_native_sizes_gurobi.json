@@ -1,0 +1,138 @@
+{
+ "solver": "gurobi",
+ "limit": "restricted pip licence: <= 2000 variables and <= 2000 linear constraints",
+ "models": [
+  {
+   "model": "A_muciniphila_BAA835",
+   "fba_vars": 1478,
+   "fba_cons": 1321,
+   "split_vars": 2161,
+   "split_cons": 1321,
+   "nnz": 8981,
+   "objectives": 3,
+   "accepted": false,
+   "error": "GurobiError: Model too large for size-limited license; visit https://gurobi.com/unrestricted for more information"
+  },
+  {
+   "model": "B_fragilis_NCTC9343",
+   "fba_vars": 1981,
+   "fba_cons": 1643,
+   "split_vars": 2899,
+   "split_cons": 1643,
+   "nnz": 12000,
+   "objectives": 3,
+   "accepted": false,
+   "error": "GurobiError: Model too large for size-limited license; visit https://gurobi.com/unrestricted for more information"
+  },
+  {
+   "model": "B_longum_NCC2705",
+   "fba_vars": 1535,
+   "fba_cons": 1237,
+   "split_vars": 2290,
+   "split_cons": 1237,
+   "nnz": 9305,
+   "objectives": 3,
+   "accepted": false,
+   "error": "GurobiError: Model too large for size-limited license; visit https://gurobi.com/unrestricted for more information"
+  },
+  {
+   "model": "B_thetaiotaomicron_VPI5482",
+   "fba_vars": 1980,
+   "fba_cons": 1645,
+   "split_vars": 2907,
+   "split_cons": 1645,
+   "nnz": 11987,
+   "objectives": 3,
+   "accepted": false,
+   "error": "GurobiError: Model too large for size-limited license; visit https://gurobi.com/unrestricted for more information"
+  },
+  {
+   "model": "Bl_obeum_A2162",
+   "fba_vars": 1096,
+   "fba_cons": 1003,
+   "split_vars": 1692,
+   "split_cons": 1003,
+   "nnz": 7090,
+   "objectives": 3,
+   "accepted": true,
+   "template_solve": "OPTIMAL"
+  },
+  {
+   "model": "C_comes_ATCC27758",
+   "fba_vars": 1425,
+   "fba_cons": 1248,
+   "split_vars": 2117,
+   "split_cons": 1248,
+   "nnz": 8696,
+   "objectives": 3,
+   "accepted": false,
+   "error": "GurobiError: Model too large for size-limited license; visit https://gurobi.com/unrestricted for more information"
+  },
+  {
+   "model": "E_rectale_ATCC33656",
+   "fba_vars": 1673,
+   "fba_cons": 1450,
+   "split_vars": 2483,
+   "split_cons": 1450,
+   "nnz": 10281,
+   "objectives": 3,
+   "accepted": false,
+   "error": "GurobiError: Model too large for size-limited license; visit https://gurobi.com/unrestricted for more information"
+  },
+  {
+   "model": "F_prausnitzii_A2165",
+   "fba_vars": 1559,
+   "fba_cons": 1371,
+   "split_vars": 2335,
+   "split_cons": 1371,
+   "nnz": 9479,
+   "objectives": 3,
+   "accepted": false,
+   "error": "GurobiError: Model too large for size-limited license; visit https://gurobi.com/unrestricted for more information"
+  },
+  {
+   "model": "L_acidophilus_NCFM",
+   "fba_vars": 1432,
+   "fba_cons": 1220,
+   "split_vars": 2120,
+   "split_cons": 1220,
+   "nnz": 8690,
+   "objectives": 3,
+   "accepted": false,
+   "error": "GurobiError: Model too large for size-limited license; visit https://gurobi.com/unrestricted for more information"
+  },
+  {
+   "model": "P_copri_DSM18205",
+   "fba_vars": 1707,
+   "fba_cons": 1513,
+   "split_vars": 2556,
+   "split_cons": 1513,
+   "nnz": 10832,
+   "objectives": 3,
+   "accepted": false,
+   "error": "GurobiError: Model too large for size-limited license; visit https://gurobi.com/unrestricted for more information"
+  },
+  {
+   "model": "R_bromii_L263",
+   "fba_vars": 1693,
+   "fba_cons": 1497,
+   "split_vars": 2530,
+   "split_cons": 1497,
+   "nnz": 10780,
+   "objectives": 3,
+   "accepted": false,
+   "error": "GurobiError: Model too large for size-limited license; visit https://gurobi.com/unrestricted for more information"
+  },
+  {
+   "model": "R_intestinalis_L182",
+   "fba_vars": 1825,
+   "fba_cons": 1532,
+   "split_vars": 2707,
+   "split_cons": 1532,
+   "nnz": 11159,
+   "objectives": 3,
+   "accepted": false,
+   "error": "GurobiError: Model too large for size-limited license; visit https://gurobi.com/unrestricted for more information"
+  }
+ ]
+}
