@@ -1,0 +1,56 @@
+{
+ "scenario": "iJO1366, 12 h, Euler dt = 1e-3, E = 8 (perturbed diets, seed 0), manylp CPU",
+ "before_fix": {
+  "E": 8,
+  "wall_seconds": 365.7,
+  "wall_per_trajectory": 45.71,
+  "solve_seconds": 363.0,
+  "lps": 96008,
+  "solver_stats": {
+   "B": 96008,
+   "seconds": 360.5299030980095,
+   "certify_seconds": 143.3467410132289,
+   "repair_seconds": 216.29558119829744,
+   "warm": 84745,
+   "pool": 267,
+   "propagated": 7,
+   "repaired": 60,
+   "highs_uncertified": 10929,
+   "trivial": 0,
+   "highs_solves": 10989,
+   "highs_iterations": 1087190,
+   "highs_seconds": 378.3877397151664,
+   "cert_failures": 0,
+   "new_bases": 59,
+   "direct_mode": 0,
+   "unique_all": true
+  }
+ },
+ "after_fix": {
+  "E": 8,
+  "wall_seconds": 15.8,
+  "wall_per_trajectory": 1.98,
+  "solve_seconds": 13.5,
+  "lps": 96008,
+  "solver_stats": {
+   "B": 96008,
+   "seconds": 11.691486953757703,
+   "certify_seconds": 7.356963189318776,
+   "repair_seconds": 3.65622316673398,
+   "warm": 95672,
+   "pool": 269,
+   "propagated": 7,
+   "repaired": 60,
+   "highs_uncertified": 0,
+   "trivial": 0,
+   "highs_solves": 60,
+   "highs_iterations": 4618,
+   "highs_seconds": 1.7643677713349462,
+   "cert_failures": 0,
+   "new_bases": 59,
+   "direct_mode": 0,
+   "unique_all": true
+  }
+ },
+ "note": "Farkas margin test: 1e-9 relative tolerance (before) vs rigorous rounding-error bound with 1e-11 floor (after, commit fe6eb8a)"
+}

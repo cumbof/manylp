@@ -1,0 +1,46 @@
+{
+ "scenario": "iJO1366",
+ "threads": 1,
+ "rows": [
+  {
+   "scheme": "RK45 rtol=1e-06",
+   "E": 1,
+   "threads": 1,
+   "wall_seconds": 3.192659843713045,
+   "wall_per_trajectory": 3.192659843713045,
+   "lps": 638,
+   "rhs_evals": 638,
+   "max_rel_err_biomass": 0.00011520999647223093,
+   "max_rel_err_glc_ac": 0.0032670702779879044
+  },
+  {
+   "scheme": "RK45 rtol=1e-08",
+   "E": 1,
+   "threads": 1,
+   "wall_seconds": 5.986597763374448,
+   "wall_per_trajectory": 5.986597763374448,
+   "lps": 1364,
+   "rhs_evals": 1364,
+   "max_rel_err_biomass": 0.00011197916387154206,
+   "max_rel_err_glc_ac": 0.003022710980936154
+  },
+  {
+   "scheme": "RK45 rtol=1e-06",
+   "E": 8,
+   "threads": 1,
+   "wall_seconds": 8.468726792372763,
+   "wall_per_trajectory": 1.0585908490465954,
+   "lps": 13360,
+   "rhs_evals": 1670
+  },
+  {
+   "scheme": "RK45 rtol=1e-08",
+   "E": 8,
+   "threads": 1,
+   "wall_seconds": 261.6710741696879,
+   "wall_per_trajectory": 32.70888427121099,
+   "lps": 31120,
+   "rhs_evals": 3890
+  }
+ ]
+}

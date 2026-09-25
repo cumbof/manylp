@@ -1,0 +1,50 @@
+{
+ "scenario": "diauxie",
+ "threads": 1,
+ "rows": [
+  {
+   "scheme": "RK45 rtol=1e-06",
+   "E": 1,
+   "threads": 1,
+   "wall_seconds": 1.4772580517455935,
+   "wall_per_trajectory": 1.4772580517455935,
+   "lps": 1408,
+   "rhs_evals": 704,
+   "max_rel_err_biomass": 8.090985194111841e-05,
+   "max_rel_err_glc_ac": 0.0019264990679981788
+  },
+  {
+   "scheme": "RK45 rtol=1e-08",
+   "E": 1,
+   "threads": 1,
+   "wall_seconds": 1.624334936030209,
+   "wall_per_trajectory": 1.624334936030209,
+   "lps": 2716,
+   "rhs_evals": 1358,
+   "max_rel_err_biomass": 7.981175103316236e-05,
+   "max_rel_err_glc_ac": 0.0019019365640010578
+  },
+  {
+   "scheme": "RK45 rtol=1e-06",
+   "E": 32,
+   "threads": 1,
+   "wall_seconds": 13.255383436568081,
+   "wall_per_trajectory": 0.41423073239275254,
+   "lps": 271232,
+   "rhs_evals": 4238,
+   "max_rel_err_biomass": 9.729191705473472e-05,
+   "max_rel_err_glc_ac": 0.0048422840602392455
+  },
+  {
+   "scheme": "RK45 rtol=1e-08",
+   "E": 32,
+   "threads": 1,
+   "wall_seconds": 26.992675960995257,
+   "wall_per_trajectory": 0.8435211237811018,
+   "lps": 569600,
+   "rhs_evals": 8900,
+   "max_rel_err_biomass": 9.670111830162248e-05,
+   "max_rel_err_glc_ac": 0.0032966085845622705
+  }
+ ]
+}
