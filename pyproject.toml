@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "manylp"
 version = "0.1.0"
-description = "Exact batched solver for large batches of small, structurally-shared, bounds-parametric linear programs (CPU + GPU)"
+description = "Certified batched solver for large batches of small, structurally-shared, bounds-parametric linear programs (CPU + GPU)"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
