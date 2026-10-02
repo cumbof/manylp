@@ -441,7 +441,7 @@ def paper_figures(rows):
     p = f"{R}/size/size.json"
     nl = _netlib_rows()
     if os.path.exists(p) and nl:
-        fig, axes = plt.subplots(2, 1, figsize=(6.6, 8.4))
+        fig, axes = plt.subplots(1, 2, figsize=(13.2, 4.6))
         _size_panel(axes[0], json.load(open(p)), "Genome-scale models, 1,024 members (reactions in brackets)")
         _netlib_panel(axes[1], nl, "Netlib LPs, 1,024 right-hand-side scenarios per problem")
         for ax, lab in zip(axes, "AB"):
