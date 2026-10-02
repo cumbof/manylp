@@ -159,17 +159,14 @@ def _style(ax, title, xlabel, ylabel):
     ax.tick_params(colors=INK2)
 
 
-def fig_scaling(rows):
-    """(a) community dFBA throughput vs ensemble size; (b) certification throughput vs batch size."""
-    import matplotlib.pyplot as plt
+def _panel_label(ax, label):
+    ax.text(-0.13, 1.07, label, transform=ax.transAxes, fontsize=13, fontweight="bold", color=INK, va="bottom")
 
+
+def _scaling_dfba(ax, rows, title="(a) Community dFBA, 12 GEMs, 48 h, pFBA-unique"):
     series = [("manylp-cuda", "manylp (GPU)", C[0]), ("manylp-cpu", "manylp (CPU)", C[1]),
               ("highs-warm-p32", "HiGHS warm, 32 processes", C[2]),
               ("manylp-cuda-perlp", "manylp GPU, one LP per call", C[3]), ("highs-warm-x1", "HiGHS warm, 1 process", C[4])]
-    tp = f"{R}/throughput/throughput.json"
-    ncol = 2 if os.path.exists(tp) else 1
-    fig, axes = plt.subplots(1, ncol, figsize=(4.9 * ncol, 3.9), dpi=200, squeeze=False)
-    ax = axes[0, 0]
     for key, label, col in series:
         pts = sorted((E, r["lps_per_second"]) for (s, m, E), r in rows.items() if s == key and m == "pfba-unique")
         if not pts:
@@ -178,52 +175,75 @@ def fig_scaling(rows):
         ax.plot(x, y, "-o", color=col, lw=2, ms=5, label=label)
     ax.set_xscale("log", base=2)
     ax.set_yscale("log")
-    _style(ax, "(a) Community dFBA, 12 GEMs, 48 h, pFBA-unique", "ensemble size E", "LPs solved per second")
+    _style(ax, title, "ensemble size E", "LPs solved per second")
     ax.legend(frameon=False, fontsize=7, loc="upper left")
+
+
+def _scaling_kernel(ax, d, title="(b) Certification only, one GEM (n = 1,980)"):
+    for key, label, col in (("gpu-device-resident", "GPU, device-resident I/O", C[0]),
+                            ("gpu-host-io", "GPU, host I/O", C[6]),
+                            ("cpu-fused", "CPU, fused Numba kernels", C[1]), ("cpu-numpy", "CPU, NumPy", C[3])):
+        pts = sorted((r["B"], r["lps_per_second"]) for r in d if r["variant"] == key)
+        x, y = zip(*pts)
+        ax.plot(x, y, "-o", color=col, lw=2, ms=4, label=label)
+    ax.set_xscale("log", base=2)
+    ax.set_yscale("log")
+    _style(ax, title, "batch size B", "LPs certified per second")
+    ax.legend(frameon=False, fontsize=7, loc="upper left")
+
+
+def fig_scaling(rows):
+    """(a) community dFBA throughput vs ensemble size; (b) certification throughput vs batch size."""
+    import matplotlib.pyplot as plt
+
+    tp = f"{R}/throughput/throughput.json"
+    ncol = 2 if os.path.exists(tp) else 1
+    fig, axes = plt.subplots(1, ncol, figsize=(4.9 * ncol, 3.9), dpi=200, squeeze=False)
+    _scaling_dfba(axes[0, 0], rows)
     if ncol == 2:
-        ax = axes[0, 1]
-        d = json.load(open(tp))
-        for key, label, col in (("gpu-device-resident", "GPU, device-resident I/O", C[0]),
-                                ("gpu-host-io", "GPU, host I/O", C[6]),
-                                ("cpu-fused", "CPU, fused Numba kernels", C[1]), ("cpu-numpy", "CPU, NumPy", C[3])):
-            pts = sorted((r["B"], r["lps_per_second"]) for r in d if r["variant"] == key)
-            x, y = zip(*pts)
-            ax.plot(x, y, "-o", color=col, lw=2, ms=4, label=label)
-        ax.set_xscale("log", base=2)
-        ax.set_yscale("log")
-        _style(ax, "(b) Certification only, one GEM (n = 1,980)", "batch size B", "LPs certified per second")
-        ax.legend(frameon=False, fontsize=7, loc="upper left")
+        _scaling_kernel(axes[0, 1], json.load(open(tp)))
     fig.tight_layout()
     fig.savefig(f"{OUT}/fig_scaling.png")
     plt.close(fig)
 
 
-def fig_envelope():
-    import matplotlib.pyplot as plt
-
+def _envelope_data():
     p = f"{R}/alt_optima/envelope.npz"
     if not os.path.exists(p):
-        return
+        return None
     d = np.load(p, allow_pickle=True)
-    t, M, pols, env = d["times"], d["M"], list(d["policies"]), list(d["env_mets"])
-    mets = [("cpd00211_e0", "butyrate"), ("cpd00029_e0", "acetate")]
     others = {}
     for s, lab in (("cobra-glpk", "GLPK (cobra)"), ("highs-warm-x1", "HiGHS"), ("scipy-linprog", "scipy linprog")):
         f = glob.glob(f"{R}/dfba*/{s}_fba_E1_T48.npz")
         if f:
             others[lab] = np.load(f[0])
-    fig, axes = plt.subplots(1, 2, figsize=(9.6, 3.8), dpi=160)
-    for ax, (mid, lab) in zip(axes, mets):
+    return d, others
+
+
+def _envelope_panels(axes, data, titles=("{}: same model, same diet",) * 2):
+    d, others = data
+    t, M, pols, env = d["times"], d["M"], list(d["policies"]), list(d["env_mets"])
+    mets = [("cpd00211_e0", "butyrate"), ("cpd00029_e0", "acetate")]
+    for ax, (mid, lab), title in zip(axes, mets, titles):
         j = env.index(mid)
         Y = M[:, :, j]
         ax.fill_between(t, Y.min(axis=1), Y.max(axis=1), color=C[0], alpha=0.18, lw=0,
                         label=f"envelope over {len(pols)} optimal-flux policies")
         ax.plot(t, Y[:, 0], color=C[0], lw=2, label="canonical (pFBA-unique)")
         for (olab, o), col in zip(others.items(), (C[1], C[2], C[3])):
-            ot = o["times"]
-            ax.plot(ot, o["M"][:, 0, j], "--", color=col, lw=1.6, label=f"{olab}, plain FBA")
-        _style(ax, f"{lab}: same model, same diet", "time (h)", "concentration (mM)")
+            ax.plot(o["times"], o["M"][:, 0, j], "--", color=col, lw=1.6, label=f"{olab}, plain FBA")
+        _style(ax, title.format(lab), "time (h)", "concentration (mM)")
     axes[0].legend(frameon=False, fontsize=7.5, loc="upper left")
+
+
+def fig_envelope():
+    import matplotlib.pyplot as plt
+
+    data = _envelope_data()
+    if data is None:
+        return
+    fig, axes = plt.subplots(1, 2, figsize=(9.6, 3.8), dpi=160)
+    _envelope_panels(axes, data)
     fig.tight_layout()
     fig.savefig(f"{OUT}/fig_envelope.png")
     plt.close(fig)
@@ -309,14 +329,8 @@ def _netlib_rows():
     return [patch.get(r["problem"], r) for r in nl]
 
 
-def fig_netlib():
+def _netlib_panel(ax, nl, title="Netlib under RHS uncertainty (1,024 scenarios per problem)"):
     """Speed-up over 32-process HiGHS vs the number of distinct optimal bases among the 1,024 scenarios."""
-    import matplotlib.pyplot as plt
-
-    nl = _netlib_rows()
-    if not nl:
-        return
-    fig, ax = plt.subplots(figsize=(6.6, 4.2), dpi=200)
     for r in nl:
         reg = max(r["manylp-cpu"]["distinct_bases"], 1)
         bm = max(r["manylp-cpu"]["lps_per_second"], r["manylp-gpu"]["lps_per_second"])
@@ -336,29 +350,31 @@ def fig_netlib():
     ax.scatter([], [], color=C[1], label="HiGHS faster")
     ax.set_xscale("log")
     ax.set_yscale("log")
-    _style(ax, "Netlib under RHS uncertainty (1,024 scenarios per problem)",
-           "distinct optimal bases among the 1,024 scenarios", "speed-up of manylp over HiGHS (32 processes)")
+    _style(ax, title, "distinct optimal bases among the 1,024 scenarios", "speed-up of manylp over HiGHS (32 processes)")
     ax.legend(frameon=False, fontsize=7.5, loc="lower left")
+
+
+def fig_netlib():
+    import matplotlib.pyplot as plt
+
+    nl = _netlib_rows()
+    if not nl:
+        return
+    fig, ax = plt.subplots(figsize=(6.6, 4.2), dpi=200)
+    _netlib_panel(ax, nl)
     fig.tight_layout()
     fig.savefig(f"{OUT}/fig_netlib.png")
     plt.close(fig)
 
 
-def fig_size():
+def _size_panel(ax, rows, title="Genome-scale models, 1,024 members (reactions in brackets)"):
     """Speed-up over 32-process HiGHS for genome-scale models of increasing size, against distinct bases."""
-    import matplotlib.pyplot as plt
-
-    p = f"{R}/size/size.json"
-    if not os.path.exists(p):
-        return
-    rows = json.load(open(p))
-    short = {"e_coli_core": "e_coli_core", "iYO844": "iYO844", "iMM904": "iMM904", "Bl_obeum (gapseq)": "B. obeum",
-             "B_thetaiotaomicron (gapseq)": "B. theta", "iJO1366": "iJO1366", "iML1515": "iML1515",
+    short = {"e_coli_core": "e_coli_core", "iYO844": "iYO844", "iMM904": "iMM904", "Bl_obeum (gapseq)": r"$\it{B.\ obeum}$",
+             "B_thetaiotaomicron (gapseq)": r"$\it{B.\ theta}$", "iJO1366": "iJO1366", "iML1515": "iML1515",
              "Recon3D": "Recon3D"}
     # hand-placed label offsets (points) for the crowded pFBA-unique cluster
     OFF = {("iJO1366", "pfba-unique"): ((-6, 5), "right"), ("iML1515", "pfba-unique"): ((-6, -5), "right"),
            ("iMM904", "pfba-unique"): ((6, 0), "left"), ("e_coli_core", "pfba-unique"): ((-6, 0), "right")}
-    fig, ax = plt.subplots(figsize=(6.6, 4.2), dpi=200)
     for mode, col, mk, lab in (("fba", C[1], "s", "plain FBA"), ("pfba-unique", C[0], "o", "pFBA-unique")):
         for r in rows:
             if r["mode"] != mode:
@@ -379,12 +395,60 @@ def fig_size():
                 textcoords="offset points", fontsize=6.5, color=INK2, ha="right")
     ax.set_xscale("log")
     ax.set_yscale("log")
-    _style(ax, "Genome-scale models, 1,024 members (reactions in brackets)",
-           "distinct optimal bases in the batch", "speed-up of manylp over HiGHS (32 processes)")
+    _style(ax, title, "distinct optimal bases in the batch", "speed-up of manylp over HiGHS (32 processes)")
     ax.legend(frameon=False, fontsize=7.5, loc="lower left")
+
+
+def fig_size():
+    import matplotlib.pyplot as plt
+
+    p = f"{R}/size/size.json"
+    if not os.path.exists(p):
+        return
+    fig, ax = plt.subplots(figsize=(6.6, 4.2), dpi=200)
+    _size_panel(ax, json.load(open(p)))
     fig.tight_layout()
     fig.savefig(f"{OUT}/fig_size.png")
     plt.close(fig)
+
+
+def paper_figures(rows):
+    """Figures 1-3 of the manuscript, as PNG (300 dpi) and PDF in results/report/paper/."""
+    import matplotlib.pyplot as plt
+
+    out = f"{OUT}/paper"
+    os.makedirs(out, exist_ok=True)
+
+    def save(fig, name):
+        fig.tight_layout()
+        for ext in ("png", "pdf"):
+            fig.savefig(f"{out}/{name}.{ext}", dpi=300)
+        plt.close(fig)
+
+    tp = f"{R}/throughput/throughput.json"
+    if rows and os.path.exists(tp):
+        fig, axes = plt.subplots(1, 2, figsize=(9.8, 3.9))
+        _scaling_dfba(axes[0], rows, "Community dFBA, 12 species, 48 h (pFBA-unique)")
+        _scaling_kernel(axes[1], json.load(open(tp)), r"Certification only, $\it{B.\ thetaiotaomicron}$")
+        for ax, lab in zip(axes, "AB"):
+            _panel_label(ax, lab)
+        save(fig, "figure1")
+    data = _envelope_data()
+    if data is not None:
+        fig, axes = plt.subplots(1, 2, figsize=(9.6, 3.8))
+        _envelope_panels(axes, data, ("Butyrate", "Acetate"))
+        save(fig, "figure2")
+    p = f"{R}/size/size.json"
+    nl = _netlib_rows()
+    if os.path.exists(p) and nl:
+        fig, axes = plt.subplots(2, 1, figsize=(6.6, 8.4))
+        _size_panel(axes[0], json.load(open(p)), "Genome-scale models, 1,024 members (reactions in brackets)")
+        _netlib_panel(axes[1], nl, "Netlib LPs, 1,024 right-hand-side scenarios per problem")
+        for ax, lab in zip(axes, "AB"):
+            _panel_label(ax, lab)
+        save(fig, "figure3")
+
+
 
 
 def main():
@@ -427,6 +491,7 @@ def main():
     fig_accuracy()
     fig_netlib()
     fig_size()
+    paper_figures(drows)
     print(md[:6000])
 
 
