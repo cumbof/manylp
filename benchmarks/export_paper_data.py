@@ -25,4 +25,8 @@ for f in ("report/fig_accuracy.png", "report/fig_envelope.png", "report/fig_netl
         os.makedirs(f"{DST}/figures", exist_ok=True)
         shutil.copy2(f"{SRC}/{f}", f"{DST}/figures/{os.path.basename(f)}")
         n += 1
+for f in glob.glob(f"{SRC}/report/paper/figure*.p[nd][gf]"):
+    os.makedirs(f"{DST}/figures", exist_ok=True)
+    shutil.copy2(f, f"{DST}/figures/{os.path.basename(f)}")
+    n += 1
 print(f"exported {n} files to {DST}/")
