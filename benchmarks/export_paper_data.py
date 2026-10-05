@@ -1,4 +1,4 @@
-"""Copy the result summaries behind the paper's tables and figures into paper/data/.
+"""Copy the result summaries behind the paper's tables and figures into benchmarks/data/.
 
 Only JSON summaries are exported (about 10 MB); raw trajectory arrays (*.npz) stay in results/.
 
@@ -8,7 +8,7 @@ import glob
 import os
 import shutil
 
-SRC, DST = "results", "paper/data"
+SRC, DST = "results", "benchmarks/data"
 DIRS = ["solvers", "dfba_v2", "dfba_v3", "muode", "muode_v2", "spatial", "adaptive", "alt_optima", "coldstart",
         "sparsity", "netlib", "netlib_patch", "netlib_bunching", "size", "throughput", "external"]
 

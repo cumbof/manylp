@@ -185,10 +185,10 @@ chain them in the order they were run. Raw results go to `results/`, which is no
 ```bash
 python benchmarks/make_report.py         # tables and figures  -> results/report/
 python benchmarks/make_html_report.py    # HTML report         -> results/report/manylp_report.html
-python benchmarks/export_paper_data.py   # JSON summaries      -> paper/data/
+python benchmarks/export_paper_data.py   # JSON summaries      -> benchmarks/data/
 ```
 
-`paper/data/` holds the exported result summaries and figures behind every table and figure
+`benchmarks/data/` holds the exported result summaries and figures behind every table and figure
 of the paper.
 
 ## Repository layout
@@ -210,7 +210,7 @@ of the paper.
 | `benchmarks/` | every experiment in the paper |
 | `benchmarks/bunching.py` | classical bunching baseline (per-LP and batched) |
 | `benchmarks/external/` | comparisons with the `dfba` package, surfinFBA, SoPlex exact and native Gurobi/Xpress lexicographic modes |
-| `paper/` | manuscript notes and `paper/data/`, the exported results |
+| `benchmarks/data/` | the exported result summaries and figures behind every table and figure |
 | `tests/` | correctness against the independent reference, on CPU and GPU |
 
 ## Testing
