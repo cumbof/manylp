@@ -15,7 +15,6 @@ and model-predictive control. manylp is built for this regime, not for single la
 - [Installation](#installation)
 - [Quick start](#quick-start)
 - [muODE integration](#muode-integration)
-- [Reproducing the paper](#reproducing-the-paper)
 - [Repository layout](#repository-layout)
 - [Testing](#testing)
 - [License](#license)
@@ -176,20 +175,6 @@ runs = engine.run_ensemble(
 ```
 
 The default backend reproduces historical muODE outputs byte-for-byte.
-
-## Reproducing the paper
-
-Every experiment in the paper is a script in `benchmarks/`. The `benchmarks/run_*.sh` files
-chain them in the order they were run. Raw results go to `results/`, which is not tracked.
-
-```bash
-python benchmarks/make_report.py         # tables and figures  -> results/report/
-python benchmarks/make_html_report.py    # HTML report         -> results/report/manylp_report.html
-python benchmarks/export_paper_data.py   # JSON summaries      -> benchmarks/data/
-```
-
-`benchmarks/data/` holds the exported result summaries and figures behind every table and figure
-of the paper.
 
 ## Repository layout
 
