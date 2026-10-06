@@ -149,6 +149,9 @@ def main():
                 tag = f"{label}_N{N}_E{E}_T{t_end:g}"
                 with open(f"{a.out}/{tag}.json", "w") as fh:
                     json.dump(rec, fh, indent=1)
+                bm = res[0].biomass                 # member 0: biomass time course per species
+                np.savez_compressed(f"{a.out}/{tag}.npz", species=np.array(list(bm.columns)),
+                                    times=bm.index.values, X=bm.values)
                 print(f"N={N:5d} E={E:4d} {label:28s} compile {compile_s:7.1f}s  wall {wall:9.1f}s  "
                       f"LPs {st.get('lps', '-')}  simplex {st.get('highs_solves', '-')}  "
                       f"bases/sp median {rec['bases_per_species']['median']}", flush=True)
