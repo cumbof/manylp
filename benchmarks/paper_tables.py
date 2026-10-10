@@ -43,7 +43,8 @@ def solver_tables(root):
         rows = []
         for p in glob.glob(f"{root}/solvers/*.json"):
             b = os.path.basename(p)[:-5]
-            if "reference" in b or (tag and not b.endswith(tag)) or (not tag and "@" in b):
+            # classical bunching is reported separately (Table 6), not in S1/S2
+            if "reference" in b or b.startswith("bunching") or (tag and not b.endswith(tag)) or (not tag and "@" in b):
                 continue
             rows.append(json.load(open(p))["summary"])
         for s in sorted(rows, key=lambda s: -s["lps_per_second"]):
