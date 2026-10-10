@@ -18,7 +18,7 @@ warnings.filterwarnings("ignore")
 
 from manylp.dfba import ManyLPAdapter, load_gut_community, run_dfba  # noqa: E402
 
-G = os.environ.get("GUT_DIR", "../muODE/examples/gut_western")
+G = os.environ.get("GUT_DIR", "benchmarks/inputs/gut_western")
 
 
 class Recorder(ManyLPAdapter):

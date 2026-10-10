@@ -7,7 +7,7 @@ from manylp import BatchLPSolver, LexLP
 
 
 def main():
-    A, cmin, cl, cu, rl, ru, off = load_mps("../netlib/agg2.mps")
+    A, cmin, cl, cu, rl, ru, off = load_mps("benchmarks/inputs/netlib/agg2.mps")
     rows_p = np.nonzero(np.isfinite(rl) | np.isfinite(ru))[0]
     lp = LexLP(A=A, objectives=-cmin, col_lb=cl, col_ub=cu, row_lb=rl, row_ub=ru, param_rows=rows_p)
     rng = np.random.default_rng(0); L0, U0 = lp.template_param_bounds()

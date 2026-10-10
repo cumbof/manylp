@@ -1,7 +1,7 @@
-import numpy as np, warnings, cProfile, pstats, time
+import os, numpy as np, warnings, cProfile, pstats, time
 warnings.filterwarnings("ignore")
 from manylp.dfba import load_gut_community, run_dfba, ManyLPAdapter
-G = "../muODE/examples/gut_western"
+G = os.environ.get("GUT_DIR", "benchmarks/inputs/gut_western")
 comm = load_gut_community(f"{G}/gems", f"{G}/gems/western_gut_modelseed.csv", names=["B_theta","F_praus","R_bromii"], abundance_tsv=f"{G}/abundance.tsv")
 E = 4096
 pert = np.random.default_rng(0).lognormal(0, 0.3, size=(E, len(comm.env_mets)))

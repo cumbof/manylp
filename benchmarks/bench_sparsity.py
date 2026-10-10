@@ -6,7 +6,7 @@ import numpy as np
 warnings.filterwarnings("ignore")
 import manylp.basis as mb
 from manylp.dfba import ManyLPAdapter, load_gut_community, run_dfba
-G = os.environ.get("GUT_DIR", "../muODE/examples/gut_western")
+G = os.environ.get("GUT_DIR", "benchmarks/inputs/gut_western")
 
 
 def main():

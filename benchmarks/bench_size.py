@@ -20,12 +20,12 @@ def main():
     ap.add_argument("--modes", default="fba,pfba-unique")
     ap.add_argument("--highs-steps", type=int, default=4, help="HiGHS is timed on the first steps only")
     args = ap.parse_args()
-    files = [("e_coli_core", "../bigg/e_coli_core.xml.gz"), ("iYO844", "../bigg/iYO844.xml.gz"),
-             ("iMM904", "../bigg/iMM904.xml.gz"),
-             ("Bl_obeum (gapseq)", "../muODE/examples/gut_western/gems/Bl_obeum_A2162.xml.gz"),
-             ("B_thetaiotaomicron (gapseq)", "../muODE/examples/gut_western/gems/B_thetaiotaomicron_VPI5482.xml.gz"),
-             ("iJO1366", "../bigg/iJO1366.xml.gz"), ("iML1515", "../bigg/iML1515.xml.gz"),
-             ("Recon3D", "../bigg/Recon3D.xml.gz")]
+    files = [("e_coli_core", "benchmarks/inputs/bigg/e_coli_core.xml.gz"), ("iYO844", "benchmarks/inputs/bigg/iYO844.xml.gz"),
+             ("iMM904", "benchmarks/inputs/bigg/iMM904.xml.gz"),
+             ("Bl_obeum (gapseq)", "benchmarks/inputs/gut_western/gems/Bl_obeum_A2162.xml.gz"),
+             ("B_thetaiotaomicron (gapseq)", "benchmarks/inputs/gut_western/gems/B_thetaiotaomicron_VPI5482.xml.gz"),
+             ("iJO1366", "benchmarks/inputs/bigg/iJO1366.xml.gz"), ("iML1515", "benchmarks/inputs/bigg/iML1515.xml.gz"),
+             ("Recon3D", "benchmarks/inputs/bigg/Recon3D.xml.gz")]
     os.makedirs("results/size", exist_ok=True)
     rows = []
     for label, f in files:

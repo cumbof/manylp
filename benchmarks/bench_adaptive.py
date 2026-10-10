@@ -12,7 +12,7 @@ warnings.filterwarnings("ignore")
 from manylp.adaptive import run_adaptive
 from manylp.dfba import ManyLPAdapter, load_gut_community, run_dfba
 
-G = os.environ.get("GUT_DIR", "../muODE/examples/gut_western")
+G = os.environ.get("GUT_DIR", "benchmarks/inputs/gut_western")
 
 
 def euler(dt):

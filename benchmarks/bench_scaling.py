@@ -33,7 +33,7 @@ import numpy as np
 warnings.filterwarnings("ignore")
 MUODE = os.environ.get("MUODE_DIR", "../muODE")
 sys.path.insert(0, MUODE)
-G = f"{MUODE}/examples/gut_western"
+G = os.environ.get("GUT_DIR", "benchmarks/inputs/gut_western")
 
 
 def _load_one(path):

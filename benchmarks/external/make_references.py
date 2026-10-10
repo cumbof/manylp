@@ -206,7 +206,7 @@ def main():
     if a.gut:
         from manylp.dfba import load_gut_community
 
-        G = os.path.expanduser("~/isilon/cumbof/manylp_ws/muODE/examples/gut_western")
+        G = os.environ.get("GUT_DIR", "benchmarks/inputs/gut_western")
         gc = load_gut_community(f"{G}/gems", f"{G}/gems/western_gut_modelseed.csv", abundance_tsv=f"{G}/abundance.tsv")
         save_scenario(gc, "gut", f"{G}/gems", {"t_end": 48.0, "t_eval": np.arange(49.0).tolist(), "gem_dir": f"{G}/gems",
                                                "max_uptake": [x if np.isfinite(x) else None for x in gc.max_uptake]})

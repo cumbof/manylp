@@ -34,7 +34,7 @@ from muode.diet import load_diet  # noqa: E402
 from muode.kinetics import KineticParameters  # noqa: E402
 from muode.organism import CobraOrganism  # noqa: E402
 
-G = f"{MUODE}/examples/gut_western"
+G = os.environ.get("GUT_DIR", "benchmarks/inputs/gut_western")
 
 
 def load_community(n_species: int) -> Community:

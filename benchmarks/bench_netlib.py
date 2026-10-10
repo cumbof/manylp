@@ -95,7 +95,7 @@ def _bunching_row(rec, lp, L, U, cpu, args):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dir", default="../netlib")
+    ap.add_argument("--dir", default="benchmarks/inputs/netlib")
     ap.add_argument("--B", type=int, default=1024)
     ap.add_argument("--sigma", type=float, default=0.05)
     ap.add_argument("--procs", type=int, default=32)
