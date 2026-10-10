@@ -6,6 +6,7 @@
   objective-row lexicographic reference (fresh HiGHS per LP, no shared code path).
 """
 
+import json
 import os
 import pickle
 import sys
@@ -19,6 +20,39 @@ sys.path.insert(0, os.path.dirname(__file__))
 from manylp import BatchLPSolver  # noqa: E402
 from manylp.fba import compile_fba  # noqa: E402
 from manylp.reference import reference_solve  # noqa: E402
+
+
+def cross_check(snaps, fba, objs, oks, n_check, out):
+    """Re-solve a random sample with the objective-row lexicographic reference (fresh HiGHS per LP,
+    no code shared with manylp's solver) and record the largest objective difference."""
+    rng = np.random.default_rng(0)
+    worst, n_opt = 0.0, 0
+    for _ in range(n_check):
+        bi = int(rng.integers(len(snaps)))
+        step, s, members, ex_lb = snaps[bi]
+        j = int(rng.integers(len(members)))
+        Lp, Up = fba[s].param_bounds(ex_lb[j:j + 1])
+        lb, ub = fba[s].lp.full_bounds(Lp[0], Up[0])
+        r = reference_solve(fba[s].lp, lb, ub)
+        if r.status == 1:
+            n_opt += 1
+            worst = max(worst, abs(r.stage_obj[0] - objs[bi][j]) / max(1.0, abs(objs[bi][j])))
+        else:
+            assert not oks[bi][j]
+    os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
+    with open(out.replace(".npz", "_check.json"), "w") as fh:
+        json.dump({"n_check": n_check, "n_optimal": n_opt, "max_objective_difference": worst,
+                   "metric": "|reference - manylp| / max(1, |manylp|), growth objective", "seed": 0}, fh, indent=1)
+    return worst
+
+
+def check_only(workload, ref):
+    """Run only the cross-check against an existing reference file (same sample as main())."""
+    W = pickle.load(open(workload, "rb"))
+    fba = [compile_fba(m, "fba") for _, m in W["models"]]
+    R = np.load(ref, allow_pickle=True)
+    worst = cross_check(W["snapshots"], fba, list(R["obj"]), list(R["ok"]), 400, ref)
+    print(f"independent cross-check on 400 LPs: max objective difference {worst:.2e}")
 
 
 def main(workload="results/workload.pkl", out="results/solvers/reference.npz", n_check=400):
@@ -44,20 +78,7 @@ def main(workload="results/workload.pkl", out="results/solvers/reference.npz", n
         oks.append(okm)
         vexs.append(pfu[s].fluxes(b.z, pfu[s].model.exchanges))
         uniq.append(b.unique)
-    # independent cross-check on a random sample
-    rng = np.random.default_rng(0)
-    worst = 0.0
-    for _ in range(n_check):
-        bi = int(rng.integers(len(snaps)))
-        step, s, members, ex_lb = snaps[bi]
-        j = int(rng.integers(len(members)))
-        Lp, Up = fba[s].param_bounds(ex_lb[j:j + 1])
-        lb, ub = fba[s].lp.full_bounds(Lp[0], Up[0])
-        r = reference_solve(fba[s].lp, lb, ub)
-        if r.status == 1:
-            worst = max(worst, abs(r.stage_obj[0] - objs[bi][j]) / max(1.0, abs(objs[bi][j])))
-        else:
-            assert not oks[bi][j]
+    worst = cross_check(snaps, fba, objs, oks, n_check, out)
     os.makedirs(os.path.dirname(out), exist_ok=True)
     def objarr(xs):
         a = np.empty(len(xs), dtype=object)
@@ -74,7 +95,9 @@ def main(workload="results/workload.pkl", out="results/solvers/reference.npz", n
 if __name__ == "__main__":
     import sys as _s
 
-    if len(_s.argv) > 1:
+    if len(_s.argv) > 2 and _s.argv[1] == "--check-only":    # --check-only <workload.pkl> <reference.npz>
+        check_only(_s.argv[2], _s.argv[3])
+    elif len(_s.argv) > 1:
         wl = _s.argv[1]
         main(workload=wl, out=wl.replace(".pkl", "_reference.npz"))
     else:

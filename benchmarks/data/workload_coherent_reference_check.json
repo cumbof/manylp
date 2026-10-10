@@ -1,0 +1,7 @@
+{
+ "n_check": 400,
+ "n_optimal": 400,
+ "max_objective_difference": 1.7127708973330158e-11,
+ "metric": "|reference - manylp| / max(1, |manylp|), growth objective",
+ "seed": 0
+}
