@@ -21,7 +21,7 @@ import manylp.basis as mb  # noqa: E402
 from manylp import BatchLPSolver  # noqa: E402
 from manylp.fba import FBAModel, compile_fba  # noqa: E402
 
-G = os.environ.get("GUT_DIR", "benchmarks/inputs/gut_western")
+G = os.environ.get("GUT_DIR", "../muODE/examples/gut_western")
 
 
 def main(out="results/throughput"):

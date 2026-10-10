@@ -10,7 +10,7 @@ warnings.filterwarnings("ignore")
 from manylp.dfba import load_gut_community, run_dfba
 from manylp.envelope import PolicyAdapter, standard_policies
 
-G = os.environ.get("GUT_DIR", "benchmarks/inputs/gut_western")
+G = os.environ.get("GUT_DIR", "../muODE/examples/gut_western")
 # ModelSEED ids of the main fermentation products / cross-fed metabolites
 PRODUCTS = {"acetate": "cpd00029_e0", "butyrate": "cpd00211_e0", "propionate": "cpd00141_e0",
             "L-lactate": "cpd00159_e0", "succinate": "cpd00036_e0", "formate": "cpd00047_e0",

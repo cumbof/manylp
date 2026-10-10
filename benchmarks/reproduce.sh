@@ -11,28 +11,21 @@
 #   DFBA_PY         python of an environment with the dfba package (conda-forge dfba); default: dfba stage skipped
 #   SOPLEX          SoPlex 8.1 binary (conda-forge soplex); default: soplex on PATH
 #   MUODE_DIR       muODE checkout with the manylp backend (branch manylp-backend); default ../muODE
-#   GUT_DIR         gut community inputs; default benchmarks/inputs/gut_western
+#   GUT_DIR         gut community (12 gapseq models, diet, abundances); default $MUODE_DIR/examples/gut_western
 # Stages tagged [GPU] need an NVIDIA GPU, [LICENCE] Gurobi and FICO Xpress, [MUODE] the muODE simulator.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 export PYTHONPATH=. XLA_PYTHON_CLIENT_PREALLOCATE=false OMP_NUM_THREADS=${OMP_NUM_THREADS:-16}
-export GUT_DIR=${GUT_DIR:-benchmarks/inputs/gut_western} MUODE_DIR=${MUODE_DIR:-../muODE}
+export MUODE_DIR=${MUODE_DIR:-../muODE}
+export GUT_DIR=${GUT_DIR:-$MUODE_DIR/examples/gut_western}
 BASELINES_VENV=${BASELINES_VENV:-baselines}
 
 run() { local name=$1; shift; mkdir -p results logs; echo "+ [$name] $*" >&2; bash -c "$*" > "logs/$name.log" 2>&1; }
 baselines() { source benchmarks/env/activate_baselines.sh "$BASELINES_VENV"; }
 
-stage_workloads() {      # LP workloads and certified references (shipped; set RECORD=1 to re-record)
-  mkdir -p results/solvers
-  if [ "${RECORD:-0}" != 1 ]; then
-    xz -dc benchmarks/inputs/workloads/workload.pkl.xz > results/workload.pkl
-    xz -dc benchmarks/inputs/workloads/workload_coherent.pkl.xz > results/workload_coherent.pkl
-    xz -dc benchmarks/inputs/workloads/workload_reference.npz.xz > results/solvers/reference.npz
-    xz -dc benchmarks/inputs/workloads/workload_coherent_reference.npz.xz > results/workload_coherent_reference.npz
-  else                                                                                     # [GPU]
-    run record_snapshot "python benchmarks/record_workload.py && python benchmarks/make_reference.py"
-    run record_coherent "python benchmarks/record_workload.py --E 64 --every 1 --t-end 24 --out results/workload_coherent.pkl && python benchmarks/make_reference.py results/workload_coherent.pkl"
-  fi
+stage_workloads() {      # LP workloads and certified references recorded from the gut community   [GPU]
+  run record_snapshot "python benchmarks/record_workload.py && python benchmarks/make_reference.py"
+  run record_coherent "python benchmarks/record_workload.py --E 64 --every 1 --t-end 24 --out results/workload_coherent.pkl && python benchmarks/make_reference.py results/workload_coherent.pkl"
   # independent cross-check of both references on 400 sampled LPs (Methods)
   run refcheck "python benchmarks/make_reference.py --check-only results/workload_coherent.pkl results/workload_coherent_reference.npz && python benchmarks/make_reference.py --check-only results/workload.pkl results/solvers/reference.npz"
 }

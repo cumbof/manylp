@@ -33,7 +33,7 @@ from manylp.dfba import (  # noqa: E402
     run_dfba,
 )
 
-G = os.environ.get("GUT_DIR", "benchmarks/inputs/gut_western")
+G = os.environ.get("GUT_DIR", "../muODE/examples/gut_western")
 
 
 def make_adapter(name: str, files):

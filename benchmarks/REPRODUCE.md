@@ -1,11 +1,15 @@
 # Reproducing the paper
 
-Everything needed to reproduce the results of the manylp paper is in this repository:
+This repository holds what is needed to reproduce the results of the manylp paper:
 
 - the scripts (`benchmarks/`),
-- the inputs (`benchmarks/inputs/`, with sources and checksums),
+- the BiGG and Netlib inputs (`benchmarks/inputs/`, with sources and checksums),
 - the result summaries behind every table and figure (`benchmarks/data/`),
 - the software environment and hardware (`benchmarks/env/`).
+
+The 12-species gut community that most benchmarks simulate (gapseq models, Western diet and initial
+abundances) is distributed with the µODE simulator (`examples/gut_western`); set `GUT_DIR` to that
+directory, or `MUODE_DIR` to a µODE checkout.
 
 ## 1. Regenerate the tables, figures and numbers from the shipped results
 
@@ -33,7 +37,7 @@ Optional tools:
 
 - **SoPlex 8.1** for the exact rational check: `conda create -n soplexenv -c conda-forge soplex`. Pass the binary as `SOPLEX=<env>/bin/soplex`.
 - **dfba package** (Tourigny et al. 2020): `conda create -n dfbaenv -c conda-forge python=3.8 dfba cobra`. Pass its python as `DFBA_PY=<env>/bin/python`.
-- **µODE with its manylp backend**, needed only for Table 3. Point to it with `MUODE_DIR`.
+- **µODE** (branch `manylp-backend`): its `examples/gut_western` directory holds the gut community used by most benchmarks, and its manylp backend runs the end-to-end simulations of Table 3. Point to it with `MUODE_DIR`.
 
 Gurobi and FICO Xpress need licences. The paper used Gurobi's size-limited pip licence and Xpress's community licence. With those, the native lexicographic check covers the gut models that fit within the licence limits.
 

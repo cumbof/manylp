@@ -1,50 +1,28 @@
 # Benchmark inputs
 
-Every input the paper's benchmarks read, so that the repository is self-contained. The
-scripts in `benchmarks/` use these paths by default (the gut community directory can be
-overridden with `GUT_DIR`, the Netlib directory with `bench_netlib.py --dir`).
+Inputs of the model-size and Netlib benchmarks. The scripts in `benchmarks/` read them from here by
+default (the Netlib directory can be overridden with `bench_netlib.py --dir`).
 
 | Directory | Contents | Source |
 |---|---|---|
-| `gut_western/` | 12 gapseq genome-scale models of human gut species (`gems/*.xml.gz`, ModelSEED namespace), the Western diet in the same namespace (`gems/western_gut_modelseed.csv`) and the initial relative abundances (`abundance.tsv`) | Reconstructed with gapseq (Zimmermann et al. 2021) from reference genomes; see `gut_western/gems/PROVENANCE.md`. The diet translates the VMH/AGORA Western gut diet as distributed with MICOM (Diener et al. 2020) to ModelSEED identifiers. |
 | `bigg/` | e_coli_core, iYO844, iMM904, iJO1366, iML1515 and Recon3D in SBML | BiGG Models (King et al. 2016), `https://bigg.ucsd.edu/static/models/<id>.xml.gz` |
 | `netlib/` | the 44 Netlib LP problems used in the paper, in MPS format | Netlib LP collection, `https://www.netlib.org/lp/data/<problem>`, decompressed with Netlib's `emps.c` (`https://www.netlib.org/lp/data/emps.c`) |
-| `workloads/` | the recorded LP workloads and their certified reference answers (xz-compressed) | Recorded with `benchmarks/record_workload.py` and `benchmarks/make_reference.py` from the gut community above |
 
-Decompress the workloads into `results/` before running the solver comparison:
-
-```bash
-mkdir -p results/solvers
-xz -dc benchmarks/inputs/workloads/workload.pkl.xz > results/workload.pkl
-xz -dc benchmarks/inputs/workloads/workload_coherent.pkl.xz > results/workload_coherent.pkl
-xz -dc benchmarks/inputs/workloads/workload_reference.npz.xz > results/solvers/reference.npz
-xz -dc benchmarks/inputs/workloads/workload_coherent_reference.npz.xz > results/workload_coherent_reference.npz
-```
+The 12-species gut community used by most benchmarks (gapseq models, Western diet and initial
+abundances) is part of the µODE repository (`examples/gut_western`); point `GUT_DIR` to it. The LP
+workloads of the solver comparison are recorded from it with `benchmarks/record_workload.py` and
+`benchmarks/make_reference.py` (see `benchmarks/REPRODUCE.md`).
 
 ## SHA-256 checksums
 
 ```
+4c770b042c3e6e26ab4668b2900f4cf112d0a5d88a09a3520126ce0bc1605ff4  ./README.md.new
 f45f88f908a1ed1a262148bbf327d34f1d20a36383e68a67d6078d626a6774d8  ./bigg/Recon3D.xml.gz
 182a4dbb2a5899ea7e71134cc99f2e409d382f1c32c02984e27fe34e5e34ca79  ./bigg/e_coli_core.xml.gz
 9140aca37cd25f7fd6be56be0cb2ceae06a89d7b3c7dc7087d1c348f3ccd25f6  ./bigg/iJO1366.xml.gz
 2555e0f7e55a8cb8e770b9bb29cdaeb5db171941c414e7a232ff2d8e0228e308  ./bigg/iML1515.xml.gz
 a35498a941ecb004e0a810226f07c2f57b090b4cd7da7ce4958b9f0a66d99f59  ./bigg/iMM904.xml.gz
 ae819c25b166b08da23cb0cd7343d10c3c6afe15e868dd0467531ac08d6c6e80  ./bigg/iYO844.xml.gz
-a7bb56820cad44343c6392d5c6dd4d4ef2b4d3dcc3793d913bb23876285fe6a0  ./gut_western/abundance.tsv
-7d617aee59da515b6c51b5d1c282a79d5405c42f5bc4f371c93ade7de5755894  ./gut_western/gems/A_muciniphila_BAA835.xml.gz
-845fabfd43da9e3bf764cdf8201444514e8b24aa412caa8d72d35421e4b57783  ./gut_western/gems/B_fragilis_NCTC9343.xml.gz
-90c584a435c432da2b25ed95873662625cdb042a94ca2293cd472d916f7a1630  ./gut_western/gems/B_longum_NCC2705.xml.gz
-e849fd25f32fe9be27c80894d61b4f1c8b68f2ade786335a0f3bc58154a2856e  ./gut_western/gems/B_thetaiotaomicron_VPI5482.xml.gz
-349ba99baf8511e739d9347a6ec09629bf04372cf011dffde5a83cd450e10d87  ./gut_western/gems/Bl_obeum_A2162.xml.gz
-0de72ad36f348199280498e6faaa1959bd53ad8643be800a1a7e6ed0f7d3db7a  ./gut_western/gems/C_comes_ATCC27758.xml.gz
-475890be65040cf05ac6e9c753c6f4d030f6fc5cce8b06c55d514156829a6dde  ./gut_western/gems/E_rectale_ATCC33656.xml.gz
-9632d4705aa8832ad798a6cdcba14e5c3b9c282ac43914da5c69797638b48075  ./gut_western/gems/F_prausnitzii_A2165.xml.gz
-8bcdef27481d562334783205bfa2b70e6d4312ffa81798ffd19fe6cd3a82d73e  ./gut_western/gems/L_acidophilus_NCFM.xml.gz
-50641af1972607658bc02713266ab2eb2b0d9f5047d67207e14728448fa7ec3f  ./gut_western/gems/PROVENANCE.md
-3bdcbe2ff1730d365a47ee24af4e5231bfa72184027f651bd89cc51c5d335036  ./gut_western/gems/P_copri_DSM18205.xml.gz
-91ad89146e901d237035e3dfddf4a6efb4637723cac6c8a2bc881a5dec39edf6  ./gut_western/gems/R_bromii_L263.xml.gz
-006156894c8a43fbde78b0c695add98782e640c05049c424612ef15d2e609d90  ./gut_western/gems/R_intestinalis_L182.xml.gz
-31b5cbd4aa795337517fb735c37a9ce6415e857602cfdf4d06fd97e21923c029  ./gut_western/gems/western_gut_modelseed.csv
 fec81e24fa91bc545d97239b108b43e6034f37b4bf2455a3f8c179726b44d44c  ./netlib/adlittle.mps
 fd3562804ff19382a9cd8bcb22ec81bffd24a4143a2290783831d8c64516a24b  ./netlib/afiro.mps
 a9628559a665e6739dd9d18b00e32236eeed7833ede3d1e2384f78c3e39b82af  ./netlib/agg.mps
@@ -89,8 +67,4 @@ b38d3bb4f2a7aef8666fbc17496169223ccd86f0b7996c71be190ac4eab033ea  ./netlib/stair
 2ac6efdd6a6eaad89f47ea71411f8e0fbfbb24a7f31f4446133f39a41ce6fb31  ./netlib/standata.mps
 a7996944d096c3cd74ca7cbeeb77e75804bcaaaba17620dba86108555912b4c3  ./netlib/stocfor1.mps
 ab568fd861228875310ba3eb9f1d9eec1d8444c0116df78fbbc1eda38b6b9c8a  ./netlib/vtp.base.mps
-14b7f190c5020710c4933d877b941dd2c4973ffcdb82c565c8b3adcb7c13db40  ./workloads/workload.pkl.xz
-f07e9d0185cbbd9b042f92cbf15250bcd031d69dc3618114ded9a4afcb91d5b8  ./workloads/workload_coherent.pkl.xz
-9ab450c17aa6c3a4f098bd48f7977a47337c5fb219f8dfd383a2f08c602e7fd3  ./workloads/workload_coherent_reference.npz.xz
-570d4eeb875a4e7d7f9a3bf18382200b850e2e3efd6ab102db9e7a9a3106c1c2  ./workloads/workload_reference.npz.xz
 ```
