@@ -17,8 +17,8 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(__file__))
 from make_report import CAPS, dfba_rows, family  # noqa: E402
 
-R = "results"
-OUT = f"{R}/report/manylp_report.html"
+R = os.environ.get("MANYLP_RESULTS", "results")   # benchmarks/data also works
+OUT = "results/report/manylp_report.html"
 
 
 def esc(x) -> str:
@@ -165,6 +165,8 @@ def svg_scatter(points, w=720, h=400):
 def load_comparison(workload="workload.pkl"):
     rows = []
     for f in sorted(glob.glob(f"{R}/solvers/*.json")):
+        if "reference" in os.path.basename(f):
+            continue
         d = json.load(open(f))["summary"]
         if d.get("workload", "workload.pkl") != workload:
             continue

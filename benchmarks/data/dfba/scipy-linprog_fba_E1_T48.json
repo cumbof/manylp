@@ -1,0 +1,29 @@
+{
+ "solver": "scipy-linprog",
+ "mode": "fba",
+ "E": 1,
+ "t_end": 48.0,
+ "dt": 0.1,
+ "species": [
+  "A_muciniphila_BAA835",
+  "B_fragilis_NCTC9343",
+  "B_longum_NCC2705",
+  "B_thetaiotaomicron_VPI5482",
+  "Bl_obeum_A2162",
+  "C_comes_ATCC27758",
+  "E_rectale_ATCC33656",
+  "F_prausnitzii_A2165",
+  "L_acidophilus_NCFM",
+  "P_copri_DSM18205",
+  "R_bromii_L263",
+  "R_intestinalis_L182"
+ ],
+ "n_lps": 5772,
+ "solve_seconds": 217.1200224077329,
+ "wall_seconds": 217.9331477880478,
+ "lps_per_second": 26.584374559250346,
+ "solver_stats": {},
+ "pool_sizes": null,
+ "host": "lri-ts-02.lerner.ccf.org",
+ "sigma": 0.3
+}

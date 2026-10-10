@@ -11,8 +11,8 @@ import os
 
 import numpy as np
 
-R = "results"
-OUT = f"{R}/report"
+R = os.environ.get("MANYLP_RESULTS", "results")   # benchmarks/data also works
+OUT = "results/report"
 
 # validated categorical palette (fixed slot order) and text inks
 C = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#4a3aa7", "#e34948"]
@@ -89,7 +89,7 @@ def fmt(x, kind="g"):
 def comparison_table():
     rows = []
     for f in sorted(glob.glob(f"{R}/solvers/*.json")):
-        if f.endswith("reference.json"):
+        if "reference" in os.path.basename(f):
             continue
         d = json.load(open(f))["summary"]
         fam = family(d["solver"])
