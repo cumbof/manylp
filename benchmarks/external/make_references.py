@@ -174,7 +174,7 @@ def main():
     if a.gsm:
         import cobra
 
-        src = os.path.expanduser(f"~/isilon/cumbof/manylp_ws/bigg/{a.gsm}.xml.gz")
+        src = f"benchmarks/inputs/bigg/{a.gsm}.xml.gz"
         mdl = cobra.io.read_sbml_model(src)
         fm = FBAModel.from_cobra(mdl)
         fm.name = a.gsm

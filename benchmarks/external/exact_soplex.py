@@ -190,7 +190,7 @@ def main():
     ap.add_argument("--workload", default="results/workload_coherent.pkl")
     ap.add_argument("--n", type=int, default=200)
     ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--soplex", default="/mnt/isilon/w_gmi/blanked2lab/cumbof/miniforge3/envs/soplexenv/bin/soplex")
+    ap.add_argument("--soplex", default="soplex", help="SoPlex 8.1 binary (conda-forge soplex)")
     ap.add_argument("--workers", type=int, default=1)
     ap.add_argument("--time-limit", type=float, default=3600)
     ap.add_argument("--out", default="results/external/soplex_exact.json")

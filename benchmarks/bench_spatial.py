@@ -7,7 +7,7 @@ where every (cell, species) LP of a step is one batched solve per species.
 import argparse, json, os, sys, time, warnings
 import numpy as np
 warnings.filterwarnings("ignore")
-sys.path.insert(0, os.path.dirname(__file__)); sys.path.insert(0, "../muODE")
+sys.path.insert(0, os.path.dirname(__file__)); sys.path.insert(0, os.environ.get("MUODE_DIR", "../muODE"))
 from bench_muode import G, load_community
 from muode.backends import make_backend
 from muode.diet import load_diet

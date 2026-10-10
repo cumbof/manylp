@@ -43,7 +43,7 @@ warnings.filterwarnings("ignore")
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 OUT = os.path.join(ROOT, "results", "external")
-SURF = os.environ.get("SURFIN_DIR", os.path.expanduser("~/isilon/cumbof/manylp_ws/ext/surfin_fba"))
+SURF = os.environ.get("SURFIN_DIR", "../ext/surfin_fba")
 sys.path.insert(0, SURF)
 
 
@@ -122,7 +122,7 @@ def run_example():
     import surfinFBA as surf
 
     np.random.seed(0)
-    mdl = cobra.io.read_sbml_model(os.path.expanduser("~/isilon/cumbof/manylp_ws/bigg/e_coli_core.xml.gz"))
+    mdl = cobra.io.read_sbml_model("benchmarks/inputs/bigg/e_coli_core.xml.gz")
     mdl.name = "E.coli_e_coli_core"
     models, mets, y0 = surf.prep_cobrapy_models({"E.coli": mdl})
     models["E.coli"].deathrate = 1 + 0.2 * np.random.rand()
