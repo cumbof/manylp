@@ -7,6 +7,9 @@ This repository holds what is needed to reproduce the results of the manylp pape
 - the result summaries behind every table and figure (`benchmarks/data/`),
 - the software environment and hardware (`benchmarks/env/`).
 
+Every NPZ array also has a plain-JSON replica in `benchmarks/data/json/`, written and checked by
+`benchmarks/export_json_replicas.py`; the scripts still read the original files.
+
 The 12-species gut community that most benchmarks simulate (gapseq models, Western diet and initial
 abundances) is distributed with the µODE simulator (`examples/gut_western`); set `GUT_DIR` to that
 directory, or `MUODE_DIR` to a µODE checkout.

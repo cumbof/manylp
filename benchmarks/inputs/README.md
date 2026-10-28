@@ -16,7 +16,6 @@ workloads of the solver comparison are recorded from it with `benchmarks/record_
 ## SHA-256 checksums
 
 ```
-4c770b042c3e6e26ab4668b2900f4cf112d0a5d88a09a3520126ce0bc1605ff4  ./README.md.new
 f45f88f908a1ed1a262148bbf327d34f1d20a36383e68a67d6078d626a6774d8  ./bigg/Recon3D.xml.gz
 182a4dbb2a5899ea7e71134cc99f2e409d382f1c32c02984e27fe34e5e34ca79  ./bigg/e_coli_core.xml.gz
 9140aca37cd25f7fd6be56be0cb2ceae06a89d7b3c7dc7087d1c348f3ccd25f6  ./bigg/iJO1366.xml.gz
